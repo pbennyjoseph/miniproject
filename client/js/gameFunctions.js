@@ -35,11 +35,11 @@ History = new Array(MaxFld + 1);
 for (i = 0; i < MaxFld + 1; i++) History[i] = new Array(2);
 Pic = new Array(3);
 Pic[0] = new Image();
-Pic[0].src = './img/hex_r.gif';
+Pic[0].src = './img/hex_r.png';
 Pic[1] = new Image();
 Pic[1].src = './img/hex_t.gif';
 Pic[2] = new Image();
-Pic[2].src = './img/hex_b.gif';
+Pic[2].src = './img/hex_b.png';
 
 IsStart0 = true;
 IsPlayer[0] = true;
@@ -87,6 +87,7 @@ function SetLevel(nn, mm) {
 }
 
 var IsAI = 0;
+
 function ShowAI(bb) {
   var ww;
   IsAI = bb;
@@ -349,6 +350,7 @@ function RedPotCol(vv) {
   var nn = Math.floor(255 / (1 + xx / 255));
   return '#' + hh.charAt(Math.floor(nn / 16)) + hh.charAt(nn % 16) + '0000';
 }
+
 function BluePotCol(vv) {
   var xx = 0,
     hh = '0123456789abcdef';
@@ -783,6 +785,7 @@ function GetPot(llevel) {
 
 var vv = new Array(6);
 var tt = new Array(6);
+
 function SetPot(ii, jj, kk, cc, llevel) {
   Upd[ii][jj] = false;
   Bridge[ii][jj][kk] = 0;
