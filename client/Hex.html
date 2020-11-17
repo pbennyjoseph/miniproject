@@ -1,0 +1,76 @@
+<html><head>
+  <meta name="description" content="Hex is a PC-Game written in HTML and JavaScript">
+  <meta name="author" content="Lutz Tautenhahn">
+  <meta name="keywords" content="Game, Hex, JavaScript">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>Hex</title>
+  <style type="text/css">
+  span { background-color: #ffffff; border: 1px solid #000000; cursor:default }
+  .AI {font-size:9px}
+  </style>
+  <script language="javascript" src="./js/gameFunctions.js">
+  
+  </script></head>
+  <body bgcolor="#FFFFA0" text="#000000" onresize="javascript:Resize()">
+  <div align="center">
+  <form name="OptionsForm">
+  <table noborder="">
+  <tbody><tr></tr>
+
+    <td><table border="" cellpadding="10" cellspacing="0" bgcolor="#ffffff"><tbody><tr><td background="./img/hex_bg.gif" align="center"><font size="1">
+        <script language="javascript">
+        k=0;
+        for (i=0; i < Size; i++)
+        { document.write("<nobr>");
+          for (j=0; j <= i; j++)      
+          { document.write("<IMG src=\"./img/hex_t.gif\" border=0 onMouseDown=\"Clicked("+eval(i-j)+","+j+")\" title='"+String.fromCharCode(65+j)+eval(i-j+1)+"' alt='"+String.fromCharCode(65+j)+eval(i-j+1)+"'>");
+            ImgNum[i-j][j]=k++;
+          }  
+          document.writeln("</nobr><br>");
+        }
+        for (i=Size-2; i >= 0; i--)
+        { document.write("<nobr>");
+          for (j=0; j <= i; j++)      
+          { document.write("<IMG src=\"./img/hex_t.gif\" border=0 onMouseDown=\"Clicked("+eval(Size-1-j)+","+eval(Size-1-i+j)+")\" title='"+String.fromCharCode(65+Size-1-i+j)+eval(Size-j)+"' alt='"+String.fromCharCode(65+Size-1-i+j)+eval(Size-j)+"'>");
+            ImgNum[Size-1-j][Size-1-i+j]=k++;
+          }  
+          document.writeln("</nobr><br>");
+        }
+        </script><nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,0)" title="A1" alt="A1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,0)" title="A2" alt="A2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,1)" title="B1" alt="B1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,0)" title="A3" alt="A3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,1)" title="B2" alt="B2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,2)" title="C1" alt="C1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,0)" title="A4" alt="A4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,1)" title="B3" alt="B3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,2)" title="C2" alt="C2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,3)" title="D1" alt="D1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,0)" title="A5" alt="A5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,1)" title="B4" alt="B4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,2)" title="C3" alt="C3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,3)" title="D2" alt="D2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,4)" title="E1" alt="E1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,0)" title="A6" alt="A6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,1)" title="B5" alt="B5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,2)" title="C4" alt="C4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,3)" title="D3" alt="D3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,4)" title="E2" alt="E2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,5)" title="F1" alt="F1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,0)" title="A7" alt="A7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,1)" title="B6" alt="B6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,2)" title="C5" alt="C5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,3)" title="D4" alt="D4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,4)" title="E3" alt="E3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,5)" title="F2" alt="F2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,6)" title="G1" alt="G1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,0)" title="A8" alt="A8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,1)" title="B7" alt="B7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,2)" title="C6" alt="C6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,3)" title="D5" alt="D5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,4)" title="E4" alt="E4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,5)" title="F3" alt="F3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,6)" title="G2" alt="G2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,7)" title="H1" alt="H1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,0)" title="A9" alt="A9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,1)" title="B8" alt="B8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,2)" title="C7" alt="C7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,3)" title="D6" alt="D6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,4)" title="E5" alt="E5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,5)" title="F4" alt="F4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,6)" title="G3" alt="G3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,7)" title="H2" alt="H2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,8)" title="I1" alt="I1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,0)" title="A10" alt="A10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,1)" title="B9" alt="B9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,2)" title="C8" alt="C8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,3)" title="D7" alt="D7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,4)" title="E6" alt="E6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,5)" title="F5" alt="F5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,6)" title="G4" alt="G4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,7)" title="H3" alt="H3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,8)" title="I2" alt="I2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,9)" title="J1" alt="J1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,0)" title="A11" alt="A11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,1)" title="B10" alt="B10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,2)" title="C9" alt="C9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,3)" title="D8" alt="D8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,4)" title="E7" alt="E7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,5)" title="F6" alt="F6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,6)" title="G5" alt="G5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,7)" title="H4" alt="H4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,8)" title="I3" alt="I3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,9)" title="J2" alt="J2"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(0,10)" title="K1" alt="K1"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,1)" title="B11" alt="B11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,2)" title="C10" alt="C10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,3)" title="D9" alt="D9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,4)" title="E8" alt="E8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,5)" title="F7" alt="F7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,6)" title="G6" alt="G6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,7)" title="H5" alt="H5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,8)" title="I4" alt="I4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,9)" title="J3" alt="J3"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(1,10)" title="K2" alt="K2"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,2)" title="C11" alt="C11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,3)" title="D10" alt="D10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,4)" title="E9" alt="E9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,5)" title="F8" alt="F8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,6)" title="G7" alt="G7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,7)" title="H6" alt="H6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,8)" title="I5" alt="I5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,9)" title="J4" alt="J4"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(2,10)" title="K3" alt="K3"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,3)" title="D11" alt="D11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,4)" title="E10" alt="E10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,5)" title="F9" alt="F9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,6)" title="G8" alt="G8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,7)" title="H7" alt="H7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,8)" title="I6" alt="I6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,9)" title="J5" alt="J5"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(3,10)" title="K4" alt="K4"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,4)" title="E11" alt="E11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,5)" title="F10" alt="F10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,6)" title="G9" alt="G9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,7)" title="H8" alt="H8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,8)" title="I7" alt="I7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,9)" title="J6" alt="J6"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(4,10)" title="K5" alt="K5"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,5)" title="F11" alt="F11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,6)" title="G10" alt="G10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,7)" title="H9" alt="H9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,8)" title="I8" alt="I8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,9)" title="J7" alt="J7"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(5,10)" title="K6" alt="K6"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,6)" title="G11" alt="G11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,7)" title="H10" alt="H10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,8)" title="I9" alt="I9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,9)" title="J8" alt="J8"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(6,10)" title="K7" alt="K7"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,7)" title="H11" alt="H11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,8)" title="I10" alt="I10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,9)" title="J9" alt="J9"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(7,10)" title="K8" alt="K8"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,8)" title="I11" alt="I11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,9)" title="J10" alt="J10"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(8,10)" title="K9" alt="K9"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,9)" title="J11" alt="J11"><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(9,10)" title="K10" alt="K10"></nobr><br>
+  <nobr><img src="./img/hex_t.gif" border="0" onmousedown="Clicked(10,10)" title="K11" alt="K11"></nobr><br>
+  
+        </font></td></tr></tbody></table>
+    </td>
+    
+        
+      
+    
+  </tr>
+  </tbody></table>
+  </form>
+  </div>
+  <script language="JavaScript">
+    Init();
+    setInterval("Timer()",200);
+  </script>
+  
+  </body></html>
