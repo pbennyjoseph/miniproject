@@ -43,7 +43,7 @@ Pic[2].src = './img/hex_b.png';
 
 IsStart0 = true;
 IsPlayer[0] = true;
-IsPlayer[1] = false;
+IsPlayer[1] = true;
 Level[0] = 2;
 Level[1] = 3;
 
@@ -63,8 +63,8 @@ function Init() {
   RefreshScreen();
   WritePot(true);
   IsOver = false;
-  // if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
-  // else window.document.OptionsForm.Msg.value=" Red to move.";
+  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
+  else window.document.OptionsForm.Msg.value=" Red to move.";
 }
 
 function SetOption(nn, mm) {
@@ -115,14 +115,14 @@ function Timer() {
   var ll = Level[(MoveCount + Start0 + 1) % 2];
   if (SwapTest()) return;
   GetPot(ll);
-  setTimeout(
-    'GetBestMove(' +
-      eval(((MoveCount + 1 + Start0) % 2) * 2 - 1) +
-      ',' +
-      ll +
-      ')',
-    10
-  );
+  // setTimeout(
+  //   'GetBestMove(' +
+  //     eval(((MoveCount + 1 + Start0) % 2) * 2 - 1) +
+  //     ',' +
+  //     ll +
+  //     ')',
+  //   10
+  // );
 }
 
 function Back() {
@@ -148,8 +148,8 @@ function Back() {
     //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
     // else
     //   window.document.OptionsForm.Moves.value=MoveCount;
-    // if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
-    // else window.document.OptionsForm.Msg.value=" Red to move.";
+    if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
+    else window.document.OptionsForm.Msg.value=" Red to move.";
     WritePot(true);
   }
 }
@@ -266,8 +266,8 @@ function MakeMove(ii, jj, oo) {
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
   //   window.document.OptionsForm.Moves.value=MoveCount;
-  // if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
-  // else window.document.OptionsForm.Msg.value=" Red to move.";
+  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
+  else window.document.OptionsForm.Msg.value=" Red to move.";
   // if ((MoveCount==2)&&(IsSwap>0))   ;
   //   window.document.OptionsForm.Msg.value=" Swap."+window.document.OptionsForm.Msg.value;
   if (!oo) return;
@@ -276,11 +276,11 @@ function MakeMove(ii, jj, oo) {
   WritePot(true);
   if (ccol < 0) {
     if (Pot[ii][jj][2] > 0 || Pot[ii][jj][3] > 0) return;
-    // window.document.OptionsForm.Msg.value=" Red has won !";
+    window.document.OptionsForm.Msg.value=" Red has won !";
     Blink(0);
   } else {
     if (Pot[ii][jj][0] > 0 || Pot[ii][jj][1] > 0) return;
-    // window.document.OptionsForm.Msg.value=" Blue has won !";
+    window.document.OptionsForm.Msg.value=" Blue has won !";
     Blink(0);
   }
   IsOver = true;
@@ -360,6 +360,7 @@ function BluePotCol(vv) {
 }
 
 function WritePot(bb) {
+  return false;
   var ii, jj;
   if (!IsAI) return;
   if (bb) GetPot(2);
@@ -400,6 +401,7 @@ function sign(xx) {
 }
 
 function GetBestMove(theCol, theLevel) {
+  return false;
   var ii,
     jj,
     kk,
@@ -574,14 +576,14 @@ function GetBestMove(theCol, theLevel) {
       WritePot(false);
       return;
     }
-    // window.document.OptionsForm.Msg.value=" Red has won !";
+    window.document.OptionsForm.Msg.value=" Red has won !";
     Blink(-2);
   } else {
     if (Pot[ii_b][jj_b][0] > 140 || Pot[ii_b][jj_b][1] > 140) {
       WritePot(false);
       return;
     }
-    // window.document.OptionsForm.Msg.value=" Blue has won !";
+    window.document.OptionsForm.Msg.value=" Blue has won !";
     Blink(-2);
   }
   IsOver = true;
@@ -910,8 +912,6 @@ function Clicked(ii, jj) {
   }
   if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
   MakeMove(ii, jj, true);
-  // window.document.OptionsForm.HelpButton.focus();
-  // window.document.OptionsForm.HelpButton.blur();
 }
 
 function RefreshPic(ii, jj) {
