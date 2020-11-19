@@ -43,28 +43,34 @@ Pic[2].src = './img/hex_b.png';
 
 IsStart0 = true;
 IsPlayer[0] = true;
-IsPlayer[1] = true;
+IsPlayer[1] = false;
 Level[0] = 2;
 Level[1] = 3;
 
-function Init() {
+function Init(player) {
   if (IsRunning) {
-    LastEvent = 'Init()';
+    LastEvent = 'Init('+player+')';
     return;
   }
   var ii, jj;
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++) Fld[ii][jj] = 0;
   }
-  if (IsStart0) Start0 = true;
-  else Start0 = false;
+  if(player === 1){
+    SetOption(1, 0);
+  } else {
+    SetOption(0, 0);
+  }
+  if (IsStart0) Start0 = 1;
+  else Start0 = 0;
+  IsSwap = false;
   MoveCount = 0;
   MaxMoveCount = 0;
   RefreshScreen();
   WritePot(true);
   IsOver = false;
-  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
-  else window.document.OptionsForm.Msg.value=" Red to move.";
+  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value="Blue to move.";
+  else window.document.OptionsForm.Msg.value="Red to move.";
 }
 
 function SetOption(nn, mm) {
@@ -135,21 +141,21 @@ function Back() {
     MoveCount--;
     var ii = History[MoveCount][0];
     var jj = History[MoveCount][1];
-    if (MoveCount == 1 && IsSwap) {
-      Fld[jj][ii] = 0;
-      RefreshPic(jj, ii);
-      Fld[ii][jj] = ((MoveCount + Start0) % 2) * 2 - 1;
-      RefreshPic(ii, jj);
-    } else {
-      Fld[ii][jj] = 0;
-      RefreshPic(ii, jj);
-    }
+    // if (MoveCount == 1 && IsSwap) {
+    //   Fld[jj][ii] = 0;
+    //   RefreshPic(jj, ii);
+    //   Fld[ii][jj] = ((MoveCount + Start0) % 2) * 2 - 1;
+    //   RefreshPic(ii, jj);
+    // } else {
+    //   Fld[ii][jj] = 0;
+    //   RefreshPic(ii, jj);
+    // }
     // if (MoveCount<10)
     //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
     // else
     //   window.document.OptionsForm.Moves.value=MoveCount;
-    if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
-    else window.document.OptionsForm.Msg.value=" Red to move.";
+    if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value="Blue to move.";
+    else window.document.OptionsForm.Msg.value="Red to move.";
     WritePot(true);
   }
 }
@@ -216,39 +222,41 @@ function SwapTest() {
     IsRunning = false;
     return true;
   }
-  if (MoveCount == 1) {
-    for (ii = 0; ii < Size; ii++) {
-      for (jj = 0; jj < Size; jj++) {
-        if (Fld[ii][jj] != 0) {
-          if (ii + jj < 2 || ii + jj > 2 * Size - 4) return false;
-          if (ii + jj == 2 || ii + jj == 2 * Size - 4) {
-            if (random(2) < 1) return false;
-          }
-          MakeMove(ii, jj, false);
-          WritePot(true);
-          IsRunning = false;
-          return true;
-        }
-      }
-    }
-  }
+  // if (MoveCount == 1) {
+  //   for (ii = 0; ii < Size; ii++) {
+  //     for (jj = 0; jj < Size; jj++) {
+  //       if (Fld[ii][jj] != 0) {
+  //         if (ii + jj < 2 || ii + jj > 2 * Size - 4) return false;
+  //         if (ii + jj == 2 || ii + jj == 2 * Size - 4) {
+  //           if (random(2) < 1) return false;
+  //         }
+  //         MakeMove(ii, jj, false);
+  //         WritePot(true);
+  //         IsRunning = false;
+  //         return true;
+  //       }
+  //     }
+  //   }
+  // }
   return false;
 }
 
 function MakeMove(ii, jj, oo) {
+  console.log(ii, jj);
+  Timer();
   var ccol,
     kk,
     iis = ii,
     jjs = jj;
-  if (MoveCount == 1) {
-    if (Fld[ii][jj] != 0) {
-      Fld[ii][jj] = 0;
-      RefreshPic(ii, jj);
-      iis = jj;
-      jjs = ii;
-      IsSwap = 1;
-    } else IsSwap = 0;
-  }
+  // if (MoveCount == 1) {
+  //   if (Fld[ii][jj] != 0) {
+  //     Fld[ii][jj] = 0;
+  //     RefreshPic(ii, jj);
+  //     iis = jj;
+  //     jjs = ii;
+  //     IsSwap = 1;
+  //   } else IsSwap = 0;
+  // }
   ccol = ((MoveCount + 1 + Start0) % 2) * 2 - 1;
   Fld[iis][jjs] = ccol;
   RefreshPic(iis, jjs);
@@ -266,8 +274,8 @@ function MakeMove(ii, jj, oo) {
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
   //   window.document.OptionsForm.Moves.value=MoveCount;
-  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value=" Blue to move.";
-  else window.document.OptionsForm.Msg.value=" Red to move.";
+  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value="Blue to move.";
+  else window.document.OptionsForm.Msg.value="Red to move.";
   // if ((MoveCount==2)&&(IsSwap>0))   ;
   //   window.document.OptionsForm.Msg.value=" Swap."+window.document.OptionsForm.Msg.value;
   if (!oo) return;
@@ -276,11 +284,17 @@ function MakeMove(ii, jj, oo) {
   WritePot(true);
   if (ccol < 0) {
     if (Pot[ii][jj][2] > 0 || Pot[ii][jj][3] > 0) return;
-    window.document.OptionsForm.Msg.value=" Red has won !";
+    window.document.OptionsForm.Msg.value="Red has won !";
+    socket.emit('gameEnded', {
+      msg: "Red has won",
+    });
     Blink(0);
   } else {
     if (Pot[ii][jj][0] > 0 || Pot[ii][jj][1] > 0) return;
-    window.document.OptionsForm.Msg.value=" Blue has won !";
+    window.document.OptionsForm.Msg.value="Blue has won !";
+    socket.emit('gameEnded', {
+      msg: "Blue has won",
+    });
     Blink(0);
   }
   IsOver = true;
@@ -576,14 +590,20 @@ function GetBestMove(theCol, theLevel) {
       WritePot(false);
       return;
     }
-    window.document.OptionsForm.Msg.value=" Red has won !";
+    window.document.OptionsForm.Msg.value="Red has won !";
+    socket.emit('gameEnded', {
+      msg: "Red has won",
+    });
     Blink(-2);
   } else {
     if (Pot[ii_b][jj_b][0] > 140 || Pot[ii_b][jj_b][1] > 140) {
       WritePot(false);
       return;
     }
-    window.document.OptionsForm.Msg.value=" Blue has won !";
+    window.document.OptionsForm.Msg.value="Blue has won !";
+    socket.emit('gameEnded', {
+      msg: "Blue has won",
+    });
     Blink(-2);
   }
   IsOver = true;
@@ -907,11 +927,16 @@ function Clicked(ii, jj) {
     return;
   }
   if (Fld[ii][jj] != 0) {
-    if (MoveCount == 1 && false) MakeMove(ii, jj, false);
+    // if (MoveCount == 1 && false) MakeMove(ii, jj, false);
     return;
   }
   if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
   MakeMove(ii, jj, true);
+  socket.emit('playTurn', {
+    i: ii, 
+    j: jj,
+    room: room,
+  });
 }
 
 function RefreshPic(ii, jj) {
@@ -960,5 +985,6 @@ function ShowHelp() {
 }
 
 function Resize() {
+  return false;
   if (navigator.appName == 'Netscape') history.go(0);
 }
