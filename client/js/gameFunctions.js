@@ -49,14 +49,14 @@ Level[1] = 3;
 
 function Init(player) {
   if (IsRunning) {
-    LastEvent = 'Init('+player+')';
+    LastEvent = 'Init(' + player + ')';
     return;
   }
   var ii, jj;
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++) Fld[ii][jj] = 0;
   }
-  if(player === 1){
+  if (player === 1) {
     SetOption(1, 0);
   } else {
     SetOption(0, 0);
@@ -69,8 +69,9 @@ function Init(player) {
   RefreshScreen();
   WritePot(true);
   IsOver = false;
-  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value="Blue to move.";
-  else window.document.OptionsForm.Msg.value="Red to move.";
+  if ((MoveCount + Start0) % 2 == 0)
+    window.document.OptionsForm.Msg.value = 'Blue to move.';
+  else window.document.OptionsForm.Msg.value = 'Red to move.';
 }
 
 function SetOption(nn, mm) {
@@ -154,8 +155,9 @@ function Back() {
     //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
     // else
     //   window.document.OptionsForm.Moves.value=MoveCount;
-    if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value="Blue to move.";
-    else window.document.OptionsForm.Msg.value="Red to move.";
+    if ((MoveCount + Start0) % 2 == 0)
+      window.document.OptionsForm.Msg.value = 'Blue to move.';
+    else window.document.OptionsForm.Msg.value = 'Red to move.';
     WritePot(true);
   }
 }
@@ -274,8 +276,9 @@ function MakeMove(ii, jj, oo) {
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
   //   window.document.OptionsForm.Moves.value=MoveCount;
-  if ((MoveCount+Start0)%2==0) window.document.OptionsForm.Msg.value="Blue to move.";
-  else window.document.OptionsForm.Msg.value="Red to move.";
+  if ((MoveCount + Start0) % 2 == 0)
+    window.document.OptionsForm.Msg.value = 'Blue to move.';
+  else window.document.OptionsForm.Msg.value = 'Red to move.';
   // if ((MoveCount==2)&&(IsSwap>0))   ;
   //   window.document.OptionsForm.Msg.value=" Swap."+window.document.OptionsForm.Msg.value;
   if (!oo) return;
@@ -284,16 +287,16 @@ function MakeMove(ii, jj, oo) {
   WritePot(true);
   if (ccol < 0) {
     if (Pot[ii][jj][2] > 0 || Pot[ii][jj][3] > 0) return;
-    window.document.OptionsForm.Msg.value="Red has won !";
+    window.document.OptionsForm.Msg.value = 'Red has won !';
     socket.emit('gameEnded', {
-      msg: "Red has won",
+      msg: 'Red has won',
     });
     Blink(0);
   } else {
     if (Pot[ii][jj][0] > 0 || Pot[ii][jj][1] > 0) return;
-    window.document.OptionsForm.Msg.value="Blue has won !";
+    window.document.OptionsForm.Msg.value = 'Blue has won !';
     socket.emit('gameEnded', {
-      msg: "Blue has won",
+      msg: 'Blue has won',
     });
     Blink(0);
   }
@@ -590,9 +593,9 @@ function GetBestMove(theCol, theLevel) {
       WritePot(false);
       return;
     }
-    window.document.OptionsForm.Msg.value="Red has won !";
+    window.document.OptionsForm.Msg.value = 'Red has won !';
     socket.emit('gameEnded', {
-      msg: "Red has won",
+      msg: 'Red has won',
     });
     Blink(-2);
   } else {
@@ -600,9 +603,9 @@ function GetBestMove(theCol, theLevel) {
       WritePot(false);
       return;
     }
-    window.document.OptionsForm.Msg.value="Blue has won !";
+    window.document.OptionsForm.Msg.value = 'Blue has won !';
     socket.emit('gameEnded', {
-      msg: "Blue has won",
+      msg: 'Blue has won',
     });
     Blink(-2);
   }
@@ -921,19 +924,22 @@ function SetUpd(ii, jj, cc) {
 }
 
 function Clicked(ii, jj) {
+  console.log('Heloooo');
   if (IsOver) return;
-  if (IsRunning) {
-    LastEvent = 'Clicked(' + ii + ',' + jj + ')';
-    return;
-  }
+  // if (IsRunning) {
+  //   console.log('inside is running');
+  //   LastEvent = 'Clicked(' + ii + ',' + jj + ')';
+  //   //  return;
+  // }
   if (Fld[ii][jj] != 0) {
-    // if (MoveCount == 1 && false) MakeMove(ii, jj, false);
+    console.log('inside if');
+    if (MoveCount == 1 && false) MakeMove(ii, jj, false);
     return;
   }
-  if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
+  //if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
   MakeMove(ii, jj, true);
   socket.emit('playTurn', {
-    i: ii, 
+    i: ii,
     j: jj,
     room: room,
   });
