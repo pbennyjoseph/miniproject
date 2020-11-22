@@ -37,7 +37,6 @@ io.on("connection", (socket) => {
       });
       console.log('Creating new game');
     }
-    
   });
 
   // socket.on("joinGame", function (data) {

@@ -288,16 +288,12 @@ function MakeMove(ii, jj, oo) {
   if (ccol < 0) {
     if (Pot[ii][jj][2] > 0 || Pot[ii][jj][3] > 0) return;
     window.document.OptionsForm.Msg.value = 'Red has won !';
-    socket.emit('gameEnded', {
-      msg: 'Red has won',
-    });
+    endGame('Red has won!');
     Blink(0);
   } else {
     if (Pot[ii][jj][0] > 0 || Pot[ii][jj][1] > 0) return;
     window.document.OptionsForm.Msg.value = 'Blue has won !';
-    socket.emit('gameEnded', {
-      msg: 'Blue has won',
-    });
+    endGame('Blue has won!');
     Blink(0);
   }
   IsOver = true;
@@ -594,9 +590,7 @@ function GetBestMove(theCol, theLevel) {
       return;
     }
     window.document.OptionsForm.Msg.value = 'Red has won !';
-    socket.emit('gameEnded', {
-      msg: 'Red has won',
-    });
+    endGame('Red has won!');
     Blink(-2);
   } else {
     if (Pot[ii_b][jj_b][0] > 140 || Pot[ii_b][jj_b][1] > 140) {
@@ -604,9 +598,7 @@ function GetBestMove(theCol, theLevel) {
       return;
     }
     window.document.OptionsForm.Msg.value = 'Blue has won !';
-    socket.emit('gameEnded', {
-      msg: 'Blue has won',
-    });
+    endGame('Blue has won!');
     Blink(-2);
   }
   IsOver = true;
@@ -924,7 +916,6 @@ function SetUpd(ii, jj, cc) {
 }
 
 function Clicked(ii, jj) {
-  console.log('Heloooo');
   if (IsOver) return;
   // if (IsRunning) {
   //   console.log('inside is running');
@@ -937,6 +928,7 @@ function Clicked(ii, jj) {
   }
   if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
   MakeMove(ii, jj, true);
+  startstop();
   socket.emit('playTurn', {
     i: ii,
     j: jj,
