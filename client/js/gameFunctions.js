@@ -10,15 +10,15 @@ var i,
   LastEvent = '';
 var MoveCount,
   MaxMoveCount,
-  MaxFld = Size * Size,
+  MaxColor = Size * Size,
   IsSwap,
   ActiveColor = 0;
 IsPlayer = new Array(2);
 Level = new Array(2);
 ImgNum = new Array(Size);
 for (i = 0; i < Size; i++) ImgNum[i] = new Array(Size);
-Fld = new Array(Size);
-for (i = 0; i < Size; i++) Fld[i] = new Array(Size);
+Color = new Array(Size);
+for (i = 0; i < Size; i++) Color[i] = new Array(Size);
 Pot = new Array(Size);
 for (i = 0; i < Size; i++) Pot[i] = new Array(Size);
 for (i = 0; i < Size; i++) {
@@ -31,8 +31,8 @@ for (i = 0; i < Size; i++) {
 }
 Upd = new Array(Size);
 for (i = 0; i < Size; i++) Upd[i] = new Array(Size);
-History = new Array(MaxFld + 1);
-for (i = 0; i < MaxFld + 1; i++) History[i] = new Array(2);
+History = new Array(MaxColor + 1);
+for (i = 0; i < MaxColor + 1; i++) History[i] = new Array(2);
 Pic = new Array(3);
 Pic[0] = new Image();
 Pic[0].src = './img/hex_r.png';
@@ -54,12 +54,12 @@ function Init(player) {
   }
   var ii, jj;
   for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++) Fld[ii][jj] = 0;
+    for (jj = 0; jj < Size; jj++) Color[ii][jj] = 0;
   }
   if (player === 1) {
-    SetOption(1, 0);
+    IsStart0 = 0;
   } else {
-    SetOption(0, 0);
+    IsStart0 = 1;
   }
   if (IsStart0) Start0 = 1;
   else Start0 = 0;
@@ -69,7 +69,7 @@ function Init(player) {
   RefreshScreen();
   WritePot(true);
   IsOver = false;
-  if ((MoveCount + Start0) % 2 == 0)
+  if ((MoveCount + 1) % 2 == 0)
     window.document.OptionsForm.Msg.value = 'Blue to move.';
   else window.document.OptionsForm.Msg.value = 'Red to move.';
 }
@@ -143,19 +143,19 @@ function Back() {
     var ii = History[MoveCount][0];
     var jj = History[MoveCount][1];
     // if (MoveCount == 1 && IsSwap) {
-    //   Fld[jj][ii] = 0;
+    //   Color[jj][ii] = 0;
     //   RefreshPic(jj, ii);
-    //   Fld[ii][jj] = ((MoveCount + Start0) % 2) * 2 - 1;
+    //   Color[ii][jj] = ((MoveCount + Start0) % 2) * 2 - 1;
     //   RefreshPic(ii, jj);
     // } else {
-    //   Fld[ii][jj] = 0;
+    //   Color[ii][jj] = 0;
     //   RefreshPic(ii, jj);
     // }
     // if (MoveCount<10)
     //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
     // else
     //   window.document.OptionsForm.Moves.value=MoveCount;
-    if ((MoveCount + Start0) % 2 == 0)
+    if ((MoveCount + 1) % 2 == 0)
       window.document.OptionsForm.Msg.value = 'Blue to move.';
     else window.document.OptionsForm.Msg.value = 'Red to move.';
     WritePot(true);
@@ -227,7 +227,7 @@ function SwapTest() {
   // if (MoveCount == 1) {
   //   for (ii = 0; ii < Size; ii++) {
   //     for (jj = 0; jj < Size; jj++) {
-  //       if (Fld[ii][jj] != 0) {
+  //       if (Color[ii][jj] != 0) {
   //         if (ii + jj < 2 || ii + jj > 2 * Size - 4) return false;
   //         if (ii + jj == 2 || ii + jj == 2 * Size - 4) {
   //           if (random(2) < 1) return false;
@@ -251,16 +251,16 @@ function MakeMove(ii, jj, oo) {
     iis = ii,
     jjs = jj;
   // if (MoveCount == 1) {
-  //   if (Fld[ii][jj] != 0) {
-  //     Fld[ii][jj] = 0;
+  //   if (Color[ii][jj] != 0) {
+  //     Color[ii][jj] = 0;
   //     RefreshPic(ii, jj);
   //     iis = jj;
   //     jjs = ii;
   //     IsSwap = 1;
   //   } else IsSwap = 0;
   // }
-  ccol = ((MoveCount + 1 + Start0) % 2) * 2 - 1;
-  Fld[iis][jjs] = ccol;
+  ccol = (MoveCount % 2) * 2 - 1;
+  Color[iis][jjs] = ccol;
   RefreshPic(iis, jjs);
   if (History[MoveCount][0] != ii) {
     History[MoveCount][0] = ii;
@@ -276,7 +276,7 @@ function MakeMove(ii, jj, oo) {
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
   //   window.document.OptionsForm.Moves.value=MoveCount;
-  if ((MoveCount + Start0) % 2 == 0)
+  if ((MoveCount + 1) % 2 == 0)
     window.document.OptionsForm.Msg.value = 'Blue to move.';
   else window.document.OptionsForm.Msg.value = 'Red to move.';
   // if ((MoveCount==2)&&(IsSwap>0))   ;
@@ -435,7 +435,7 @@ function GetBestMove(theCol, theLevel) {
   mm = 20000;
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++) {
-      if (Fld[ii][jj] != 0) {
+      if (Color[ii][jj] != 0) {
         ii_q += 2 * ii + 1 - Size;
         jj_q += 2 * jj + 1 - Size;
       }
@@ -445,7 +445,7 @@ function GetBestMove(theCol, theLevel) {
   jj_q = sign(jj_q);
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++) {
-      if (Fld[ii][jj] == 0) {
+      if (Color[ii][jj] == 0) {
         mmp = Math.random() * (49 - theLevel * 16);
         mmp += (Math.abs(ii - 5) + Math.abs(jj - 5)) * ff;
         mmp += (8 * (ii_q * (ii - 5) + jj_q * (jj - 5))) / (MoveCount + 1);
@@ -473,7 +473,7 @@ function GetBestMove(theCol, theLevel) {
           if (theCol < 0) {
             //red
             if (ii > 3 && ii < Size - 1 && jj > 0 && jj < 3) {
-              if (Fld[ii - 1][jj + 2] == -theCol) {
+              if (Color[ii - 1][jj + 2] == -theCol) {
                 cc = CanConnectFarBorder(ii - 1, jj + 2, -theCol);
                 if (cc < 2) {
                   ii_b = ii;
@@ -488,11 +488,11 @@ function GetBestMove(theCol, theLevel) {
             }
             if (ii > 0 && ii < Size - 1 && jj == 0) {
               if (
-                Fld[ii - 1][jj + 2] == -theCol &&
-                Fld[ii - 1][jj] == 0 &&
-                Fld[ii - 1][jj + 1] == 0 &&
-                Fld[ii][jj + 1] == 0 &&
-                Fld[ii + 1][jj] == 0
+                Color[ii - 1][jj + 2] == -theCol &&
+                Color[ii - 1][jj] == 0 &&
+                Color[ii - 1][jj + 1] == 0 &&
+                Color[ii][jj + 1] == 0 &&
+                Color[ii + 1][jj] == 0
               ) {
                 ii_b = ii;
                 jj_b = jj;
@@ -500,7 +500,7 @@ function GetBestMove(theCol, theLevel) {
               }
             }
             if (ii > 0 && ii < Size - 4 && jj < Size - 1 && jj > Size - 4) {
-              if (Fld[ii + 1][jj - 2] == -theCol) {
+              if (Color[ii + 1][jj - 2] == -theCol) {
                 cc = CanConnectFarBorder(ii + 1, jj - 2, -theCol);
                 if (cc < 2) {
                   ii_b = ii;
@@ -515,11 +515,11 @@ function GetBestMove(theCol, theLevel) {
             }
             if (ii > 0 && ii < Size - 1 && jj == Size - 1) {
               if (
-                Fld[ii + 1][jj - 2] == -theCol &&
-                Fld[ii + 1][jj] == 0 &&
-                Fld[ii + 1][jj - 1] == 0 &&
-                Fld[ii][jj - 1] == 0 &&
-                Fld[ii - 1][jj] == 0
+                Color[ii + 1][jj - 2] == -theCol &&
+                Color[ii + 1][jj] == 0 &&
+                Color[ii + 1][jj - 1] == 0 &&
+                Color[ii][jj - 1] == 0 &&
+                Color[ii - 1][jj] == 0
               ) {
                 ii_b = ii;
                 jj_b = jj;
@@ -528,7 +528,7 @@ function GetBestMove(theCol, theLevel) {
             }
           } else {
             if (jj > 3 && jj < Size - 1 && ii > 0 && ii < 3) {
-              if (Fld[ii + 2][jj - 1] == -theCol) {
+              if (Color[ii + 2][jj - 1] == -theCol) {
                 cc = CanConnectFarBorder(ii + 2, jj - 1, -theCol);
                 if (cc < 2) {
                   jj_b = jj;
@@ -543,11 +543,11 @@ function GetBestMove(theCol, theLevel) {
             }
             if (jj > 0 && jj < Size - 1 && ii == 0) {
               if (
-                Fld[ii + 2][jj - 1] == -theCol &&
-                Fld[ii][jj - 1] == 0 &&
-                Fld[ii + 1][jj - 1] == 0 &&
-                Fld[ii + 1][jj] == 0 &&
-                Fld[ii][jj + 1] == 0
+                Color[ii + 2][jj - 1] == -theCol &&
+                Color[ii][jj - 1] == 0 &&
+                Color[ii + 1][jj - 1] == 0 &&
+                Color[ii + 1][jj] == 0 &&
+                Color[ii][jj + 1] == 0
               ) {
                 ii_b = ii;
                 jj_b = jj;
@@ -555,7 +555,7 @@ function GetBestMove(theCol, theLevel) {
               }
             }
             if (jj > 0 && jj < Size - 4 && ii < Size - 1 && ii > Size - 4) {
-              if (Fld[ii - 2][jj + 1] == -theCol) {
+              if (Color[ii - 2][jj + 1] == -theCol) {
                 cc = CanConnectFarBorder(ii - 2, jj + 1, -theCol);
                 if (cc < 2) {
                   jj_b = jj;
@@ -570,11 +570,11 @@ function GetBestMove(theCol, theLevel) {
             }
             if (jj > 0 && jj < Size - 1 && ii == Size - 1) {
               if (
-                Fld[ii - 2][jj + 1] == -theCol &&
-                Fld[ii][jj + 1] == 0 &&
-                Fld[ii - 1][jj + 1] == 0 &&
-                Fld[ii - 1][jj] == 0 &&
-                Fld[ii][jj - 1] == 0
+                Color[ii - 2][jj + 1] == -theCol &&
+                Color[ii][jj + 1] == 0 &&
+                Color[ii - 1][jj + 1] == 0 &&
+                Color[ii - 1][jj] == 0 &&
+                Color[ii][jj - 1] == 0
               ) {
                 ii_b = ii;
                 jj_b = jj;
@@ -619,68 +619,68 @@ function CanConnectFarBorder(nn, mm, cc) {
     if (2 * mm < Size - 1) {
       for (ii = 0; ii < Size; ii++) {
         for (jj = 0; jj < mm; jj++) {
-          if (jj - ii < mm - nn && ii + jj <= nn + mm && Fld[ii][jj] != 0)
+          if (jj - ii < mm - nn && ii + jj <= nn + mm && Color[ii][jj] != 0)
             return 2;
         }
       }
-      if (Fld[nn - 1][mm] == -cc) return 0;
-      if (Fld[nn - 1][mm - 1] == -cc) {
-        if (GetFld(nn + 2, mm - 1) == -cc) return 0;
+      if (Color[nn - 1][mm] == -cc) return 0;
+      if (Color[nn - 1][mm - 1] == -cc) {
+        if (GetColor(nn + 2, mm - 1) == -cc) return 0;
         return -1;
       }
-      if (GetFld(nn + 2, mm - 1) == -cc) return -2;
+      if (GetColor(nn + 2, mm - 1) == -cc) return -2;
     } else {
       for (ii = 0; ii < Size; ii++) {
         for (jj = Size - 1; jj > mm; jj--) {
-          if (jj - ii > mm - nn && ii + jj >= nn + mm && Fld[ii][jj] != 0)
+          if (jj - ii > mm - nn && ii + jj >= nn + mm && Color[ii][jj] != 0)
             return 2;
         }
       }
-      if (Fld[nn + 1][mm] == -cc) return 0;
-      if (Fld[nn + 1][mm + 1] == -cc) {
-        if (GetFld(nn - 2, mm + 1) == -cc) return 0;
+      if (Color[nn + 1][mm] == -cc) return 0;
+      if (Color[nn + 1][mm + 1] == -cc) {
+        if (GetColor(nn - 2, mm + 1) == -cc) return 0;
         return -1;
       }
-      if (GetFld(nn - 2, mm + 1) == -cc) return -2;
+      if (GetColor(nn - 2, mm + 1) == -cc) return -2;
     }
   } else {
     if (2 * nn < Size - 1) {
       for (jj = 0; jj < Size; jj++) {
         for (ii = 0; ii < nn; ii++) {
-          if (ii - jj < nn - mm && ii + jj <= nn + mm && Fld[ii][jj] != 0)
+          if (ii - jj < nn - mm && ii + jj <= nn + mm && Color[ii][jj] != 0)
             return 2;
         }
       }
-      if (Fld[nn][mm - 1] == -cc) return 0;
-      if (Fld[nn - 1][mm - 1] == -cc) {
-        if (GetFld(nn - 1, mm + 2) == -cc) return 0;
+      if (Color[nn][mm - 1] == -cc) return 0;
+      if (Color[nn - 1][mm - 1] == -cc) {
+        if (GetColor(nn - 1, mm + 2) == -cc) return 0;
         return -1;
       }
-      if (GetFld(nn - 1, mm + 2) == -cc) return -2;
+      if (GetColor(nn - 1, mm + 2) == -cc) return -2;
     } else {
       for (jj = 0; jj < Size; jj++) {
         for (ii = Size - 1; ii > nn; ii--) {
-          if (ii - jj > nn - mm && ii + jj >= nn + mm && Fld[ii][jj] != 0)
+          if (ii - jj > nn - mm && ii + jj >= nn + mm && Color[ii][jj] != 0)
             return 2;
         }
       }
-      if (Fld[nn][mm + 1] == -cc) return 0;
-      if (Fld[nn + 1][mm + 1] == -cc) {
-        if (GetFld(nn + 1, mm - 2) == -cc) return 0;
+      if (Color[nn][mm + 1] == -cc) return 0;
+      if (Color[nn + 1][mm + 1] == -cc) {
+        if (GetColor(nn + 1, mm - 2) == -cc) return 0;
         return -1;
       }
-      if (GetFld(nn + 1, mm - 2) == -cc) return -2;
+      if (GetColor(nn + 1, mm - 2) == -cc) return -2;
     }
   }
   return 1;
 }
 
-function GetFld(ii, jj) {
+function GetColor(ii, jj) {
   if (ii < 0) return -1;
   if (jj < 0) return 1;
   if (ii >= Size) return -1;
   if (jj >= Size) return 1;
-  return Fld[ii][jj];
+  return Color[ii][jj];
 }
 
 function Blink(nn) {
@@ -701,14 +701,14 @@ function Blink(nn) {
   }
   var ii,
     jj,
-    cc = (nn % 2) * (((MoveCount + Start0) % 2) * 2 - 1);
+    cc = (nn % 2) * (((MoveCount + 1) % 2) * 2 - 1);
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++) {
       if (
         Pot[ii][jj][0] + Pot[ii][jj][1] <= 0 ||
         Pot[ii][jj][2] + Pot[ii][jj][3] <= 0
       ) {
-        Fld[ii][jj] = cc;
+        Color[ii][jj] = cc;
         RefreshPic(ii, jj);
       }
     }
@@ -735,27 +735,27 @@ function GetPot(llevel) {
     }
   }
   for (ii = 0; ii < Size; ii++) {
-    if (Fld[ii][0] == 0) Pot[ii][0][0] = dd;
+    if (Color[ii][0] == 0) Pot[ii][0][0] = dd;
     //blue border
     else {
-      if (Fld[ii][0] > 0) Pot[ii][0][0] = 0;
+      if (Color[ii][0] > 0) Pot[ii][0][0] = 0;
     }
-    if (Fld[ii][Size - 1] == 0) Pot[ii][Size - 1][1] = dd;
+    if (Color[ii][Size - 1] == 0) Pot[ii][Size - 1][1] = dd;
     //blue border
     else {
-      if (Fld[ii][Size - 1] > 0) Pot[ii][Size - 1][1] = 0;
+      if (Color[ii][Size - 1] > 0) Pot[ii][Size - 1][1] = 0;
     }
   }
   for (jj = 0; jj < Size; jj++) {
-    if (Fld[0][jj] == 0) Pot[0][jj][2] = dd;
+    if (Color[0][jj] == 0) Pot[0][jj][2] = dd;
     //red border
     else {
-      if (Fld[0][jj] < 0) Pot[0][jj][2] = 0;
+      if (Color[0][jj] < 0) Pot[0][jj][2] = 0;
     }
-    if (Fld[Size - 1][jj] == 0) Pot[Size - 1][jj][3] = dd;
+    if (Color[Size - 1][jj] == 0) Pot[Size - 1][jj][3] = dd;
     //red border
     else {
-      if (Fld[Size - 1][jj] < 0) Pot[Size - 1][jj][3] = 0;
+      if (Color[Size - 1][jj] < 0) Pot[Size - 1][jj][3] = 0;
     }
   }
   for (
@@ -814,7 +814,7 @@ var tt = new Array(6);
 function SetPot(ii, jj, kk, cc, llevel) {
   Upd[ii][jj] = false;
   Bridge[ii][jj][kk] = 0;
-  if (Fld[ii][jj] == -cc) return 0;
+  if (Color[ii][jj] == -cc) return 0;
   var ll,
     mm,
     ddb = 0,
@@ -879,7 +879,7 @@ function SetPot(ii, jj, kk, cc, llevel) {
     Bridge[ii][jj][kk] /= 2; // /=4
   if (Bridge[ii][jj][kk] > 68) Bridge[ii][jj][kk] = 68; //66
 
-  if (Fld[ii][jj] == cc) {
+  if (Color[ii][jj] == cc) {
     if (mm < Pot[ii][jj][kk]) {
       Pot[ii][jj][kk] = mm;
       SetUpd(ii + 1, jj, cc);
@@ -910,8 +910,8 @@ function PotVal(ii, jj, kk, cc) {
   if (jj < 0) return 30000;
   if (ii >= Size) return 30000;
   if (jj >= Size) return 30000;
-  if (Fld[ii][jj] == 0) return Pot[ii][jj][kk];
-  if (Fld[ii][jj] == -cc) return 30000;
+  if (Color[ii][jj] == 0) return Pot[ii][jj][kk];
+  if (Color[ii][jj] == -cc) return 30000;
   return Pot[ii][jj][kk] - 30000;
 }
 
@@ -931,12 +931,11 @@ function Clicked(ii, jj) {
   //   LastEvent = 'Clicked(' + ii + ',' + jj + ')';
   //   //  return;
   // }
-  if (Fld[ii][jj] != 0) {
-    console.log('inside if');
+  if (Color[ii][jj] != 0) {
     if (MoveCount == 1 && false) MakeMove(ii, jj, false);
     return;
   }
-  //if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
+  if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
   MakeMove(ii, jj, true);
   socket.emit('playTurn', {
     i: ii,
@@ -946,7 +945,7 @@ function Clicked(ii, jj) {
 }
 
 function RefreshPic(ii, jj) {
-  window.document.images[ImgNum[ii][jj]].src = Pic[1 + Fld[ii][jj]].src;
+  window.document.images[ImgNum[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
   // if (MoveCount<10)
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
@@ -956,7 +955,7 @@ function RefreshPic(ii, jj) {
 function RefreshScreen() {
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++)
-      document.images[ImgNum[ii][jj]].src = Pic[1 + Fld[ii][jj]].src;
+      document.images[ImgNum[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
   }
   // if (MoveCount<10)
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
