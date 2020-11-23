@@ -8,18 +8,6 @@ function MoveOpponent(ii, jj) {
   MakeMove(ii, jj, true);
 }
 
-function endGame(msg) {
-  if (room === undefined) return false;
-  // alert(message);
-
-  socket.emit("gameEnded", {
-    room: room,
-    msg: msg,
-  });
-  $("#container_2").hide();
-  $("#Msg").val("Game Ended");
-}
-
 socket.on("player2", (data) => {
   player = data.player;
   Init(data.player);
@@ -49,12 +37,7 @@ socket.on("turnPlayed", (data) => {
   //stop();
 });
 
-socket.on("gameEnded", (data) => {
-  // alert(data.msg);
-  $("#container_2").hide();
-  startstop();
-  $("#Msg").innerHTML = "Game Ended";
-});
+
 
 socket.emit("createOrJoinGame", {
   nsps: "10",
@@ -66,6 +49,23 @@ $("#container_2").hide();
 // time in tenths of a second
 var time = 600;
 var running = 0;
+
+
+function endGame(msg) {
+  if(running === 1)
+    startstop();
+  if (room === undefined) return false;
+  socket.emit("gameEnded", {
+    room: room,
+    msg: msg,
+  });
+}
+
+socket.on("gameEnded", (data) => {
+  if(running === 1)
+    startstop();
+  $("#Msg").val(data.msg);
+});
 
 function startstop() {
   if (running == 0) {
@@ -94,7 +94,6 @@ function resetTimer() {
 function decrement() {
   if (running == 1) {
     setTimeout(function () {
-      time--;
       var mins = Math.floor(time / 10 / 60);
       var secs = Math.floor((time / 10) % 60);
       var tenths = time % 10;
@@ -106,11 +105,13 @@ function decrement() {
       }
       $("#output").html(mins + ":" + secs + ":" + "0" + tenths);
       if (mins <= 0 && secs <= 0 && tenths <= 0) {
+        IsOver = 1;
         if (player) {
           endGame("Red has won on time!");
         } else endGame("Blue has won on time!");
         return;
       }
+      time--;
       decrement();
     }, 100);
   }
