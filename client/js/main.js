@@ -24,12 +24,12 @@ socket.on('newGame', (data) => {
   room = data.id;
 });
 
-socket.on('isDisconnected', (data) => {
-  alert('isDisconnected');
-  $('#isconnected').val('The player disconnected');
+// socket.on('isDisconnected', (data) => {
+//   alert('isDisconnected');
+//   $('#isconnected').val('The player disconnected');
 
-  room = data.id;
-});
+//   room = data.id;
+// });
 
 socket.on('startGame', (_data) => {
   $('#throbber').hide();
@@ -58,6 +58,10 @@ var running = 0;
 function endGame(msg) {
   if (running === 1) startstop();
   if (room === undefined) return false;
+  db.collection('games').add({
+    id: auth.currentUser.uid,
+    moves: GetMoveList(),
+  }).then(() => console.log("Game Added into database"));
   socket.emit('gameEnded', {
     room: room,
     msg: msg,

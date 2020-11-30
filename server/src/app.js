@@ -16,10 +16,10 @@ io.on('connection', (socket) => {
   socket.on('createOrJoinGame', (data) => {
     var room = io._nsps.get('/').adapter.rooms.get(currentRoom);
     // console.log(io._nsps.get('/').adapter);
-    socket.on('disconnect', function () {
-      socket.emit('isDisconnected');
-      console.log('DISCONNETED!!! 1111');
-    });
+    // socket.on('disconnect', function () {
+    //   socket.emit('isDisconnected');
+    //   console.log('DISCONNETED!!! 1111');
+    // });
     if (room) console.log('Size: ' + room.size);
     if (room && room.size < 2) {
       socket.join(currentRoom);

@@ -15,8 +15,8 @@ var MoveCount,
   ActiveColor = 0;
 IsPlayer = new Array(2);
 Level = new Array(2);
-ImgNum = new Array(Size);
-for (i = 0; i < Size; i++) ImgNum[i] = new Array(Size);
+GameElements_images = new Array(Size);
+for (i = 0; i < Size; i++) GameElements_images[i] = new Array(Size);
 Color = new Array(Size);
 for (i = 0; i < Size; i++) Color[i] = new Array(Size);
 Pot = new Array(Size);
@@ -188,6 +188,7 @@ function GetMoveList() {
     if (nn > 0) ss += ' ';
     ss += String.fromCharCode(65 + jj) + eval(ii + 1);
   }
+  return ss;
   // window.document.OptionsForm.MoveList.value=ss;
 }
 
@@ -307,7 +308,7 @@ function ShowPot() {
   var ii, jj;
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++)
-      window.document.images[ImgNum[ii][jj]].title =
+      window.document.images[GameElements_images[ii][jj]].title =
         Math.round(Pot[ii][jj][2]) +
         '\n' +
         Math.round(Pot[ii][jj][0]) +
@@ -934,10 +935,11 @@ function Clicked(ii, jj) {
     j: jj,
     room: room,
   });
+  $("#Moves").val(GetMoveList());
 }
 
 function RefreshPic(ii, jj) {
-  window.document.images[ImgNum[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
+  window.document.images[GameElements_images[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
   // if (MoveCount<10)
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
@@ -947,7 +949,7 @@ function RefreshPic(ii, jj) {
 function RefreshScreen() {
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++)
-      document.images[ImgNum[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
+      document.images[GameElements_images[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
   }
   // if (MoveCount<10)
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
