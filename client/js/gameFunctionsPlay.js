@@ -7,7 +7,7 @@ var i,
   Start0,
   Size = 11,
   IsRunning = false,
-  LastEvent = '';
+  LastEvent = "";
 var MoveCount,
   MaxMoveCount,
   MaxColor = Size * Size,
@@ -35,11 +35,11 @@ History = new Array(MaxColor + 1);
 for (i = 0; i < MaxColor + 1; i++) History[i] = new Array(2);
 Pic = new Array(3);
 Pic[0] = new Image();
-Pic[0].src = './img/hex_r.png';
+Pic[0].src = "./img/hex_r.png";
 Pic[1] = new Image();
-Pic[1].src = './img/hex_t.gif';
+Pic[1].src = "./img/hex_t.gif";
 Pic[2] = new Image();
-Pic[2].src = './img/hex_b.png';
+Pic[2].src = "./img/hex_b.png";
 
 IsStart0 = true;
 IsPlayer[0] = true;
@@ -69,14 +69,11 @@ function Init(player) {
   RefreshScreen();
   WritePot(true);
   IsOver = false;
-  if ((MoveCount + 1) % 2 == 0)
-    window.document.OptionsForm.Msg.value = 'Blue to move.';
-  else window.document.OptionsForm.Msg.value = 'Red to move.';
 }
 
 function SetOption(nn, mm) {
   if (IsRunning) {
-    LastEvent = 'SetOption(' + nn + ',' + mm + ')';
+    LastEvent = "SetOption(" + nn + "," + mm + ")";
     return;
   }
   if (nn < 2) {
@@ -87,7 +84,7 @@ function SetOption(nn, mm) {
 
 function SetLevel(nn, mm) {
   if (IsRunning) {
-    LastEvent = 'SetLevel(' + nn + ',' + mm + ')';
+    LastEvent = "SetLevel(" + nn + "," + mm + ")";
     return;
   }
   Level[nn] = mm;
@@ -100,16 +97,16 @@ function ShowAI(bb) {
   IsAI = bb;
   if (IsAI) {
     WritePot(true);
-    document.getElementById('AI').style.display = 'inline';
+    document.getElementById("AI").style.display = "inline";
     ww = parseInt(window.top.innerWidth);
     if (ww < 840) window.top.resizeBy(840 - ww, 0);
-  } else document.getElementById('AI').style.display = 'none';
+  } else document.getElementById("AI").style.display = "none";
 }
 
 function Timer() {
-  if (LastEvent != '') {
+  if (LastEvent != "") {
     eval(LastEvent);
-    LastEvent = '';
+    LastEvent = "";
     return;
   }
   if (IsOver) return;
@@ -133,15 +130,18 @@ function Timer() {
 }
 
 function Back() {
-  if (IsRunning) {
-    LastEvent = 'Back()';
-    return;
-  }
+  //   if (IsRunning) {
+  //     LastEvent = 'Back()';
+  //     return;
+  //   }
   if (MoveCount > 0) {
     IsOver = false;
     MoveCount--;
     var ii = History[MoveCount][0];
     var jj = History[MoveCount][1];
+    // MakeMove(ii, jj, false);
+    Color[ii][jj] = 0;
+    RefreshPic(ii,jj);
     // if (MoveCount == 1 && IsSwap) {
     //   Color[jj][ii] = 0;
     //   RefreshPic(jj, ii);
@@ -155,25 +155,19 @@ function Back() {
     //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
     // else
     //   window.document.OptionsForm.Moves.value=MoveCount;
-    if ((MoveCount + 1) % 2 == 0)
-      window.document.OptionsForm.Msg.value = 'Blue to move.';
-    else window.document.OptionsForm.Msg.value = 'Red to move.';
-    WritePot(true);
+    // WritePot(true);
   }
 }
 
 function Replay() {
-  if (IsRunning) {
-    LastEvent = 'Replay()';
-    return;
-  }
+  //   if (IsRunning) {
+  //     LastEvent = 'Replay()';
+  //     return;
+  //   }
   if (MoveCount < MaxMoveCount) {
     var ii = History[MoveCount][0];
     var jj = History[MoveCount][1];
-    if (MoveCount < MaxMoveCount - 1) {
-      MakeMove(ii, jj, false);
-      WritePot(true);
-    } else MakeMove(ii, jj, true);
+    MakeMove(ii, jj, false);
   }
 }
 
@@ -181,11 +175,11 @@ function GetMoveList() {
   var ii,
     jj,
     nn,
-    ss = '';
+    ss = "";
   for (nn = 0; nn < MaxMoveCount; nn++) {
     ii = History[nn][0];
     jj = History[nn][1];
-    if (nn > 0) ss += ' ';
+    if (nn > 0) ss += " ";
     ss += String.fromCharCode(65 + jj) + eval(ii + 1);
   }
   return ss;
@@ -200,7 +194,7 @@ function ApplyMoveList(ss) {
   // Init();
   MoveCount = 0;
   var ii, jj, nn; //ss=window.document.OptionsForm.MoveList.value;
-  ss = ss.split(' ');
+  ss = ss.split(" ");
   for (nn = 0; nn < ss.length; nn++) {
     jj = ss[nn].charCodeAt(0) - 65;
     ii = parseInt(ss[nn].substr(1, 2)) - 1;
@@ -278,9 +272,6 @@ function MakeMove(ii, jj, oo) {
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
   //   window.document.OptionsForm.Moves.value=MoveCount;
-  if ((MoveCount + 1) % 2 == 0)
-    window.document.OptionsForm.Msg.value = 'Blue to move.';
-  else window.document.OptionsForm.Msg.value = 'Red to move.';
   // if ((MoveCount==2)&&(IsSwap>0))   ;
   //   window.document.OptionsForm.Msg.value=" Swap."+window.document.OptionsForm.Msg.value;
   if (!oo) return;
@@ -289,13 +280,9 @@ function MakeMove(ii, jj, oo) {
   WritePot(true);
   if (ccol < 0) {
     if (Pot[ii][jj][2] > 0 || Pot[ii][jj][3] > 0) return;
-    window.document.OptionsForm.Msg.value = 'Red has won !';
-    endGame('Red has won!');
     Blink(0);
   } else {
     if (Pot[ii][jj][0] > 0 || Pot[ii][jj][1] > 0) return;
-    window.document.OptionsForm.Msg.value = 'Blue has won !';
-    endGame('Blue has won!');
     Blink(0);
   }
   IsOver = true;
@@ -311,40 +298,40 @@ function ShowPot() {
     for (jj = 0; jj < Size; jj++)
       window.document.images[GameElements_images[ii][jj]].title =
         Math.round(Pot[ii][jj][2]) +
-        '\n' +
+        "\n" +
         Math.round(Pot[ii][jj][0]) +
-        '|' +
+        "|" +
         Math.round(Pot[ii][jj][1]) +
-        '->' +
+        "->" +
         Math.round(Pot[ii][jj][0] + Pot[ii][jj][1]) +
-        '\n' +
+        "\n" +
         Math.round(Pot[ii][jj][3]) +
-        '->' +
+        "->" +
         Math.round(Pot[ii][jj][2] + Pot[ii][jj][3]) +
-        '\n' +
+        "\n" +
         Math.round(
           Pot[ii][jj][0] + Pot[ii][jj][1] + Pot[ii][jj][2] + Pot[ii][jj][3]
         ) +
-        '\n' +
+        "\n" +
         Math.round(Bridge[ii][jj][2]) +
-        '\n' +
+        "\n" +
         Math.round(Bridge[ii][jj][0]) +
-        '|' +
+        "|" +
         Math.round(Bridge[ii][jj][1]) +
-        '->' +
+        "->" +
         Math.round(Bridge[ii][jj][0] + Bridge[ii][jj][1]) +
-        '\n' +
+        "\n" +
         Math.round(Bridge[ii][jj][3]) +
-        '->' +
+        "->" +
         Math.round(Bridge[ii][jj][2] + Bridge[ii][jj][3]) +
-        '\n' +
+        "\n" +
         Math.round(
           Bridge[ii][jj][0] +
             Bridge[ii][jj][1] +
             Bridge[ii][jj][2] +
             Bridge[ii][jj][3]
         ) +
-        '\n' +
+        "\n" +
         Math.round(
           Pot[ii][jj][0] +
             Pot[ii][jj][1] +
@@ -360,18 +347,18 @@ function ShowPot() {
 
 function RedPotCol(vv) {
   var xx = 0,
-    hh = '0123456789abcdef';
+    hh = "0123456789abcdef";
   if (vv > 0) xx = vv;
   var nn = Math.floor(255 / (1 + xx / 255));
-  return '#' + hh.charAt(Math.floor(nn / 16)) + hh.charAt(nn % 16) + '0000';
+  return "#" + hh.charAt(Math.floor(nn / 16)) + hh.charAt(nn % 16) + "0000";
 }
 
 function BluePotCol(vv) {
   var xx = 0,
-    hh = '0123456789abcdef';
+    hh = "0123456789abcdef";
   if (vv > 0) xx = vv;
   var nn = Math.floor(255 / (1 + xx / 255));
-  return '#0000' + hh.charAt(Math.floor(nn / 16)) + hh.charAt(nn % 16);
+  return "#0000" + hh.charAt(Math.floor(nn / 16)) + hh.charAt(nn % 16);
 }
 
 function WritePot(bb) {
@@ -381,29 +368,29 @@ function WritePot(bb) {
   if (bb) GetPot(2);
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++) {
-      window.document.getElementById('Pot0' + ii + jj).title = Math.round(
+      window.document.getElementById("Pot0" + ii + jj).title = Math.round(
         Pot[ii][jj][0]
       );
-      window.document.getElementById('Pot1' + ii + jj).title = Math.round(
+      window.document.getElementById("Pot1" + ii + jj).title = Math.round(
         Pot[ii][jj][1]
       );
-      window.document.getElementById('Pot2' + ii + jj).title = Math.round(
+      window.document.getElementById("Pot2" + ii + jj).title = Math.round(
         Pot[ii][jj][2]
       );
-      window.document.getElementById('Pot3' + ii + jj).title = Math.round(
+      window.document.getElementById("Pot3" + ii + jj).title = Math.round(
         Pot[ii][jj][3]
       );
       window.document.getElementById(
-        'Pot0' + ii + jj
+        "Pot0" + ii + jj
       ).style.backgroundColor = BluePotCol(Pot[ii][jj][0]);
       window.document.getElementById(
-        'Pot1' + ii + jj
+        "Pot1" + ii + jj
       ).style.backgroundColor = BluePotCol(Pot[ii][jj][1]);
       window.document.getElementById(
-        'Pot2' + ii + jj
+        "Pot2" + ii + jj
       ).style.backgroundColor = RedPotCol(Pot[ii][jj][2]);
       window.document.getElementById(
-        'Pot3' + ii + jj
+        "Pot3" + ii + jj
       ).style.backgroundColor = RedPotCol(Pot[ii][jj][3]);
     }
   }
@@ -591,16 +578,16 @@ function GetBestMove(theCol, theLevel) {
       WritePot(false);
       return;
     }
-    window.document.OptionsForm.Msg.value = 'Red has won !';
-    endGame('Red has won!');
+    window.document.OptionsForm.Msg.value = "Red has won !";
+    endGame("Red has won!");
     Blink(-2);
   } else {
     if (Pot[ii_b][jj_b][0] > 140 || Pot[ii_b][jj_b][1] > 140) {
       WritePot(false);
       return;
     }
-    window.document.OptionsForm.Msg.value = 'Blue has won !';
-    endGame('Blue has won!');
+    window.document.OptionsForm.Msg.value = "Blue has won !";
+    endGame("Blue has won!");
     Blink(-2);
   }
   IsOver = true;
@@ -680,13 +667,13 @@ function GetColor(ii, jj) {
 function Blink(nn) {
   IsRunning = true;
   if (nn == -2) {
-    setTimeout('Blink(-1)', 10);
+    setTimeout("Blink(-1)", 10);
     return;
   }
   if (nn == -1) {
     GetPot(0);
     WritePot(false);
-    setTimeout('Blink(0)', 10);
+    setTimeout("Blink(0)", 10);
     return;
   }
   if (nn == 14) {
@@ -707,7 +694,7 @@ function Blink(nn) {
       }
     }
   }
-  setTimeout('Blink(' + eval(nn + 1) + ')', 200);
+  setTimeout("Blink(" + eval(nn + 1) + ")", 200);
 }
 
 function GetPot(llevel) {
@@ -931,7 +918,7 @@ function Clicked(ii, jj) {
   if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
   MakeMove(ii, jj, true);
   startstop();
-  socket.emit('playTurn', {
+  socket.emit("playTurn", {
     i: ii,
     j: jj,
     room: room,
@@ -940,10 +927,8 @@ function Clicked(ii, jj) {
 }
 
 function RefreshPic(ii, jj) {
-  console.log(ii);
-  console.log(jj);
-  console.log(Color[ii][jj]);
-  window.document.images[GameElements_images[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
+  window.document.images[GameElements_images[ii][jj]].src =
+    Pic[1 + Color[ii][jj]].src;
   // if (MoveCount<10)
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
@@ -953,7 +938,8 @@ function RefreshPic(ii, jj) {
 function RefreshScreen() {
   for (ii = 0; ii < Size; ii++) {
     for (jj = 0; jj < Size; jj++)
-      document.images[GameElements_images[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
+      document.images[GameElements_images[ii][jj]].src =
+        Pic[1 + Color[ii][jj]].src;
   }
   // if (MoveCount<10)
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
@@ -963,31 +949,31 @@ function RefreshScreen() {
 
 function ShowHelp() {
   alert(
-    'Hex is a board game for two players. It was' +
-      '\nindependently invented by Piet Hein in 1942' +
-      '\nand John Nash in 1948 and became popular' +
-      '\nafter 1950 under the name Hex.' +
-      '\nHex is most commonly played on a board with' +
-      '\n11x11 cells, but it can also be played on a' +
-      '\nboard of another size. The red player trys' +
-      '\nto connect the two red borders with a chain' +
-      '\nof red cells by coloring empty cells red,' +
-      '\nwhile the blue player trys the same with the' +
-      '\nblue borders.' +
-      '\nThe game can never end with a draw:' +
-      '\nWhen all cells have been colored, there must' +
-      '\nexists either a red chain or a blue chain.' +
-      '\nThe player who moves first has a big advantage.' +
-      '\nIn order to compense this, there is often used' +
+    "Hex is a board game for two players. It was" +
+      "\nindependently invented by Piet Hein in 1942" +
+      "\nand John Nash in 1948 and became popular" +
+      "\nafter 1950 under the name Hex." +
+      "\nHex is most commonly played on a board with" +
+      "\n11x11 cells, but it can also be played on a" +
+      "\nboard of another size. The red player trys" +
+      "\nto connect the two red borders with a chain" +
+      "\nof red cells by coloring empty cells red," +
+      "\nwhile the blue player trys the same with the" +
+      "\nblue borders." +
+      "\nThe game can never end with a draw:" +
+      "\nWhen all cells have been colored, there must" +
+      "\nexists either a red chain or a blue chain." +
+      "\nThe player who moves first has a big advantage." +
+      "\nIn order to compense this, there is often used" +
       "\nthe so-called 'swap rule': After the first move," +
-      '\nthe second player is allowed to swap the sides.' +
-      '\nIn order to apply the swap rule click again on' +
-      '\nthe cell which was selected in the first move.' +
-      '\nGood luck!'
+      "\nthe second player is allowed to swap the sides." +
+      "\nIn order to apply the swap rule click again on" +
+      "\nthe cell which was selected in the first move." +
+      "\nGood luck!"
   );
 }
 
 function Resize() {
   return false;
-  if (navigator.appName == 'Netscape') history.go(0);
+  if (navigator.appName == "Netscape") history.go(0);
 }

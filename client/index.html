@@ -29,13 +29,52 @@
         }
       }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-auth.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyCE4muhRwifzke2T8hIxJ5bsO4gM3oG2Pk",
+        authDomain: "hex-ai-7039a.firebaseapp.com",
+        databaseURL: "https://hex-ai-7039a.firebaseio.com",
+        projectId: "hex-ai-7039a",
+        storageBucket: "hex-ai-7039a.appspot.com",
+        messagingSenderId: "551246524696",
+        appId: "1:551246524696:web:6642358b41f4fa7b93ee6d",
+        measurementId: "G-2BZ5VPX5W7",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      var auth = firebase.auth();
+      firebase.auth().onAuthStateChanged(function (user) {
+                if (user){
+                  let username = auth.currentUser.displayName;
+                  if(!username){
+                    username = "Anonymous";
+                  }
+                  $("#username").html("Hello! " + username);
+                }else {
+                  window.location.href = './login.html';
+               }
+            }, function (error) {
+           console.log(error);
+         });
+
+      function signOut() {
+        firebase.auth().signOut();
+      }
+
+      
+    </script>
   </head>
   
   
   <body>
 	  
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand" href="#">HexAI</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -45,18 +84,13 @@
       <li class="nav-item active">
         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-        <div class="dropdown-menu" aria-labelledby="dropdown01">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
+      <li class="nav-item active">
+        <a class="nav-link" href="./mygames.html">My Games</a>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
-      <p class="my-2 my-sm-0 mx-2 text-white">Name</p>
-      <button class="btn btn-primary my-2 my-sm-0" type="submit">Login</button>
+      <p id="username" class="my-2 my-sm-0 mx-2 text-white">Fetching Name..</p>
+      <button id="login" class="btn btn-primary my-2 my-sm-0" type="submit">Logout</button>
     </form>
   </div>
 </nav>
@@ -64,7 +98,7 @@
 <main role="main">
   <div class="jumbotron">
     <div class="container">
-      <h1 class="display-3">Hex AI!</h1>
+      <h2>Play Hex Online!</h2>
       <p>Hex is a two player abstract strategy board game in which players attempt to connect opposite sides of a hexagonal board.</p>
       <center>
         <p><a class="btn btn-primary btn-lg" href="https://en.wikipedia.org/wiki/Hex_(board_game)" target="_blank" role="button">Learn more &raquo;</a></p>
@@ -77,14 +111,14 @@
     <!-- Example row of columns -->
     <div class="row" display="color:flex;"> 
       <div class="col-md-4" display="color:flex;">
-        <a href='Hex.html'>
+        <a class="text-decoration-none" href='Hex.html'>
           <h2>Two player game</h2>
         </a>
         <p>A room will have 2 players. The users can connect to any random player or he can share the room code with another player</p>
-        <a href='Hex.html'>
-          <h2>Play with AI</h2>
+        <a class="text-decoration-none" href='Hex.html'>
+          <h2>Play with Computer</h2>
         </a>
-        <p>The player will play with the agent trained using the Reinforcement Learning.</p>
+        <p>The player will play with a javascript computer agent</p>
       </div>
       
     </div>
@@ -96,6 +130,10 @@
 </main>
 
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+  $("#login").on('click', signOut);
+</script>
 </html>
