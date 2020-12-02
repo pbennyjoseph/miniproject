@@ -3,7 +3,8 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server, {
   cors: true,
-  origins: ['http://127.0.0.1:5500'],
+  origins: ['https://hex-ai-7039a.web.app/',
+            'http://127.0.0.1:5500/'],
 });
 let currentRoom = 0;
 

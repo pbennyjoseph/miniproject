@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:3000');
+const socket = io.connect('https://hexai.herokuapp.com/');
 const DEFAULT_TIME_SECONDS = 60;
 var player;
 var room;
@@ -52,7 +52,7 @@ $('#throbber').show();
 $('#container_2').hide();
 
 // time in tenths of a second
-var time = 600;
+var time = 1200;
 var running = 0;
 
 function endGame(msg) {
