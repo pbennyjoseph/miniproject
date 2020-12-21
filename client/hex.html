@@ -29,17 +29,18 @@
 
       <script>
          fetch('/__/firebase/init.json').then(async response => {
-         firebase.initializeApp(await response.json());
+            await firebase.initializeApp(await response.json());
+            var db = firebase.firestore();
+            var auth = firebase.auth();
+            firebase.auth().onAuthStateChanged(function (user) {
+                     if (user) ;else {
+                        window.location.href = './login.html';
+                     }
+                  }, function (error) {
+               console.log(error);
+               });
          });
-      var db = firebase.firestore();
-      var auth = firebase.auth();
-      firebase.auth().onAuthStateChanged(function (user) {
-                if (user) ;else {
-                  window.location.href = './login.html';
-               }
-            }, function (error) {
-           console.log(error);
-         });
+
       </script>
       
       <script type="text/javascript" src="./js/gameFunctions.js"></script>

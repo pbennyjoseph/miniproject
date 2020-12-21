@@ -23,33 +23,25 @@
   <script src="./js/gameFunctionsPlay.js"></script>
 
   <script>
-    var firebaseConfig = {
-      apiKey: "AIzaSyCE4muhRwifzke2T8hIxJ5bsO4gM3oG2Pk",
-      authDomain: "hex-ai-7039a.firebaseapp.com",
-      databaseURL: "https://hex-ai-7039a.firebaseio.com",
-      projectId: "hex-ai-7039a",
-      storageBucket: "hex-ai-7039a.appspot.com",
-      messagingSenderId: "551246524696",
-      appId: "1:551246524696:web:6642358b41f4fa7b93ee6d",
-      measurementId: "G-2BZ5VPX5W7",
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    var auth = firebase.auth();
-    var db = firebase.firestore();
-    firebase.auth().onAuthStateChanged(
-      function (user) {
-        if (user) {
-          $("#status").html("Loading games..");
-          loadGames();
-        } else {
-          window.location.href = "./login.html";
-        }
-      },
-      function (error) {
-        console.log(error);
-      }
-    );
+    fetch('/__/firebase/init.json').then(async response => {
+        await firebase.initializeApp(await response.json());
+        var auth = firebase.auth();
+        var db = firebase.firestore();
+        firebase.auth().onAuthStateChanged(
+          function (user) {
+            if (user) {
+              $("#status").html("Loading games..");
+              loadGames();
+            } else {
+              window.location.href = "./login.html";
+            }
+          },
+          function (error) {
+            console.log(error);
+          }
+        );
+      });
+    
   </script>
 </head>
 <body>
@@ -132,7 +124,6 @@
             </button>
           </div>
           <div class="modal-body">
-            <p>Modal body text goes here.</p>
           </div>
           <div class="modal-footer">
             <button id="prevmove" type="button" class="btn btn-primary">Previous</button>
@@ -168,11 +159,10 @@
   ></script>
   <script>
     async function loadGames() {
-      let gamesRef = db.collection("games");
-      console.log(auth.currentUser);
+      let gamesRef = firebase.firestore().collection("games");
       try {
         let gameSnapshots = await gamesRef
-          .where("id", "==", auth.currentUser.uid)
+          .where("id", "==", firebase.auth().currentUser.uid)
           .get();
 
         let elements = [];

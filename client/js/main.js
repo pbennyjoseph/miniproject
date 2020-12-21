@@ -58,8 +58,8 @@ var running = 0;
 function endGame(msg) {
   if (running === 1) startstop();
   if (room === undefined) return false;
-  db.collection('games').add({
-    id: auth.currentUser.uid,
+  firebase.firestore().collection('games').add({
+    id: firebase.auth().currentUser.uid,
     moves: GetMoveList(),
   }).then(() => console.log("Game Added into database"));
   socket.emit('gameEnded', {

@@ -36,22 +36,22 @@
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-auth.js"></script>
     <script>
       fetch('/__/firebase/init.json').then(async response => {
-        firebase.initializeApp(await response.json());
+        await firebase.initializeApp(await response.json());
+        var auth = firebase.auth();
+        firebase.auth().onAuthStateChanged(function (user) {
+                  if (user){
+                    let username = auth.currentUser.displayName;
+                    if(!username){
+                      username = "Anonymous";
+                    }
+                    $("#username").html("Hello! " + username);
+                  }else {
+                    window.location.href = './login.html';
+                }
+              }, function (error) {
+            console.log(error);
+          });
       });
-      var auth = firebase.auth();
-      firebase.auth().onAuthStateChanged(function (user) {
-                if (user){
-                  let username = auth.currentUser.displayName;
-                  if(!username){
-                    username = "Anonymous";
-                  }
-                  $("#username").html("Hello! " + username);
-                }else {
-                  window.location.href = './login.html';
-               }
-            }, function (error) {
-           console.log(error);
-         });
 
       function signOut() {
         firebase.auth().signOut();

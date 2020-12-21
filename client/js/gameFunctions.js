@@ -6,7 +6,7 @@ var i,
   Start,
   Start0,
   Size = 11,
-  IsRunning = false,
+  IsRuNing = false,
   LastEvent = '';
 var MoveCount,
   MaxMoveCount,
@@ -15,14 +15,14 @@ var MoveCount,
   ActiveColor = 0;
 IsPlayer = new Array(2);
 Level = new Array(2);
-GameElements_images = new Array(Size);
-for (i = 0; i < Size; i++) GameElements_images[i] = new Array(Size);
+GameElementsi_indexmages = new Array(Size);
+for (i = 0; i < Size; i++) GameElementsi_indexmages[i] = new Array(Size);
 Color = new Array(Size);
 for (i = 0; i < Size; i++) Color[i] = new Array(Size).fill(0);
-Pot = new Array(Size);
-for (i = 0; i < Size; i++) Pot[i] = new Array(Size);
+ComputedValues = new Array(Size);
+for (i = 0; i < Size; i++) ComputedValues[i] = new Array(Size);
 for (i = 0; i < Size; i++) {
-  for (j = 0; j < Size; j++) Pot[i][j] = new Array(4);
+  for (j = 0; j < Size; j++) ComputedValues[i][j] = new Array(4);
 }
 Bridge = new Array(Size);
 for (i = 0; i < Size; i++) Bridge[i] = new Array(Size);
@@ -31,8 +31,8 @@ for (i = 0; i < Size; i++) {
 }
 Upd = new Array(Size);
 for (i = 0; i < Size; i++) Upd[i] = new Array(Size);
-History = new Array(MaxColor + 1);
-for (i = 0; i < MaxColor + 1; i++) History[i] = new Array(2);
+GameHistory = new Array(MaxColor + 1);
+for (i = 0; i < MaxColor + 1; i++) GameHistory[i] = new Array(2);
 Pic = new Array(3);
 Pic[0] = new Image();
 Pic[0].src = './img/hex_r.png';
@@ -48,13 +48,13 @@ Level[0] = 2;
 Level[1] = 3;
 
 function Init(player) {
-  // if (IsRunning) {
+  // if (IsRuNing) {
   //   LastEvent = 'Init(' + player + ')';
   //   return;
   // }
-  var ii, jj;
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++) Color[ii][jj] = 0;
+  var i_index, j_index;
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++) Color[i_index][j_index] = 0;
   }
   if (player === 1) {
     IsStart0 = 0;
@@ -67,30 +67,30 @@ function Init(player) {
   MoveCount = 0;
   MaxMoveCount = 0;
   RefreshScreen();
-  WritePot(true);
+  WriteCompute(true);
   IsOver = false;
   if ((MoveCount + 1) % 2 == 0)
     window.document.OptionsForm.Msg.value = 'Blue to move.';
   else window.document.OptionsForm.Msg.value = 'Red to move.';
 }
 
-function SetOption(nn, mm) {
-  if (IsRunning) {
-    LastEvent = 'SetOption(' + nn + ',' + mm + ')';
+function SetOption(N, M) {
+  if (IsRuNing) {
+    LastEvent = 'SetOption(' + N + ',' + M + ')';
     return;
   }
-  if (nn < 2) {
-    if (mm == 0) IsPlayer[nn] = true;
-    else IsPlayer[nn] = false;
-  } else IsStart0 = mm;
+  if (N < 2) {
+    if (M == 0) IsPlayer[N] = true;
+    else IsPlayer[N] = false;
+  } else IsStart0 = M;
 }
 
-function SetLevel(nn, mm) {
-  if (IsRunning) {
-    LastEvent = 'SetLevel(' + nn + ',' + mm + ')';
+function SetLevel(N, M) {
+  if (IsRuNing) {
+    LastEvent = 'SetLevel(' + N + ',' + M + ')';
     return;
   }
-  Level[nn] = mm;
+  Level[N] = M;
 }
 
 var IsAI = 0;
@@ -99,9 +99,9 @@ function ShowAI(bb) {
   var ww;
   IsAI = bb;
   if (IsAI) {
-    WritePot(true);
+    WriteCompute(true);
     document.getElementById('AI').style.display = 'inline';
-    ww = parseInt(window.top.innerWidth);
+    ww = parseInt(window.top.iNerWidth);
     if (ww < 840) window.top.resizeBy(840 - ww, 0);
   } else document.getElementById('AI').style.display = 'none';
 }
@@ -113,15 +113,15 @@ function Timer() {
     return;
   }
   if (IsOver) return;
-  if (IsRunning) return;
+  if (IsRuNing) return;
   if (IsPlayer[(MoveCount + Start0 + 1) % 2]) {
-    WritePot(true);
+    WriteCompute(true);
     return;
   }
-  IsRunning = true;
+  IsRuNing = true;
   var ll = Level[(MoveCount + Start0 + 1) % 2];
   if (SwapTest()) return;
-  GetPot(ll);
+  ComputeData(ll);
   // setTimeout(
   //   'GetBestMove(' +
   //     eval(((MoveCount + 1 + Start0) % 2) * 2 - 1) +
@@ -133,23 +133,23 @@ function Timer() {
 }
 
 function Back() {
-  if (IsRunning) {
+  if (IsRuNing) {
     LastEvent = 'Back()';
     return;
   }
   if (MoveCount > 0) {
     IsOver = false;
     MoveCount--;
-    var ii = History[MoveCount][0];
-    var jj = History[MoveCount][1];
+    var i_index = GameHistory[MoveCount][0];
+    var j_index = GameHistory[MoveCount][1];
     // if (MoveCount == 1 && IsSwap) {
-    //   Color[jj][ii] = 0;
-    //   RefreshPic(jj, ii);
-    //   Color[ii][jj] = ((MoveCount + Start0) % 2) * 2 - 1;
-    //   RefreshPic(ii, jj);
+    //   Color[j_index][i_index] = 0;
+    //   UpdatePic(j_index, i_index);
+    //   Color[i_index][j_index] = ((MoveCount + Start0) % 2) * 2 - 1;
+    //   UpdatePic(i_index, j_index);
     // } else {
-    //   Color[ii][jj] = 0;
-    //   RefreshPic(ii, jj);
+    //   Color[i_index][j_index] = 0;
+    //   UpdatePic(i_index, j_index);
     // }
     // if (MoveCount<10)
     //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
@@ -158,85 +158,85 @@ function Back() {
     if ((MoveCount + 1) % 2 == 0)
       window.document.OptionsForm.Msg.value = 'Blue to move.';
     else window.document.OptionsForm.Msg.value = 'Red to move.';
-    WritePot(true);
+    WriteCompute(true);
   }
 }
 
 function Replay() {
-  if (IsRunning) {
+  if (IsRuNing) {
     LastEvent = 'Replay()';
     return;
   }
   if (MoveCount < MaxMoveCount) {
-    var ii = History[MoveCount][0];
-    var jj = History[MoveCount][1];
+    var i_index = GameHistory[MoveCount][0];
+    var j_index = GameHistory[MoveCount][1];
     if (MoveCount < MaxMoveCount - 1) {
-      MakeMove(ii, jj, false);
-      WritePot(true);
-    } else MakeMove(ii, jj, true);
+      MakeMove(i_index, j_index, false);
+      WriteCompute(true);
+    } else MakeMove(i_index, j_index, true);
   }
 }
 
 function GetMoveList() {
-  var ii,
-    jj,
-    nn,
+  var i_index,
+    j_index,
+    N,
     ss = '';
-  for (nn = 0; nn < MaxMoveCount; nn++) {
-    ii = History[nn][0];
-    jj = History[nn][1];
-    if (nn > 0) ss += ' ';
-    ss += String.fromCharCode(65 + jj) + eval(ii + 1);
+  for (N = 0; N < MaxMoveCount; N++) {
+    i_index = GameHistory[N][0];
+    j_index = GameHistory[N][1];
+    if (N > 0) ss += ' ';
+    ss += String.fromCharCode(65 + j_index) + eval(i_index + 1);
   }
   return ss;
   // window.document.OptionsForm.MoveList.value=ss;
 }
 
 function ApplyMoveList(ss) {
-  // if (IsRunning) {
+  // if (IsRuNing) {
   //   LastEvent = 'ApplyMoveList()';
   //   return;
   // }
   // Init();
   MoveCount = 0;
-  var ii, jj, nn; //ss=window.document.OptionsForm.MoveList.value;
+  var i_index, j_index, N; //ss=window.document.OptionsForm.MoveList.value;
   ss = ss.split(' ');
-  for (nn = 0; nn < ss.length; nn++) {
-    jj = ss[nn].charCodeAt(0) - 65;
-    ii = parseInt(ss[nn].substr(1, 2)) - 1;
-    if (isNaN(ii) || isNaN(jj) || ii < 0 || jj < 0 || ii >= Size || jj >= Size)
+  for (N = 0; N < ss.length; N++) {
+    j_index = ss[N].charCodeAt(0) - 65;
+    i_index = parseInt(ss[N].substr(1, 2)) - 1;
+    if (isNaN(i_index) || isNaN(j_index) || i_index < 0 || j_index < 0 || i_index >= Size || j_index >= Size)
       return;
-    if (nn < ss.length - 1) MakeMove(ii, jj, false);
-    else MakeMove(ii, jj, false);
+    if (N < ss.length - 1) MakeMove(i_index, j_index, false);
+    else MakeMove(i_index, j_index, false);
   }
 }
 
 function SwapTest() {
   if (true) return false;
-  var ii, jj;
+  var i_index, j_index;
   if (MoveCount == 0) {
-    ii = random(4);
-    jj = random(4 - ii);
+    i_index = random(4);
+    j_index = random(4 - i_index);
     if (random(2) < 1) {
-      ii = Size - 1 - ii;
-      jj = Size - 1 - jj;
+      i_index = Size - 1 - i_index;
+      j_index = Size - 1 - j_index;
     }
-    MakeMove(ii, jj, false);
-    WritePot(true);
-    IsRunning = false;
+    MakeMove(i_index, j_index, false);
+    WriteCompute(true);
+    IsRuNing = false;
     return true;
   }
   // if (MoveCount == 1) {
-  //   for (ii = 0; ii < Size; ii++) {
-  //     for (jj = 0; jj < Size; jj++) {
-  //       if (Color[ii][jj] != 0) {
-  //         if (ii + jj < 2 || ii + jj > 2 * Size - 4) return false;
-  //         if (ii + jj == 2 || ii + jj == 2 * Size - 4) {
+  //   for (i_index = 0; i_index < Size; i_index++) {
+  //     for (j_index = 0; j_index < Size; j_index++) {
+  //       if (Color[i_index][j_index] != 0) {
+  //         if (i_index + j_index < 2 || i_index + j_index > 2 * Size - 4) return false;
+  //         if (i_index + j_index == 2 || i_index + j_index == 2 * Size - 4) {
   //           if (random(2) < 1) return false;
   //         }
-  //         MakeMove(ii, jj, false);
-  //         WritePot(true);
-  //         IsRunning = false;
+  //         MakeMove(i_index, j_index, false);
+  //         WriteCompute(true);
+  //         IsRuNing = false;
   //         return true;
   //       }
   //     }
@@ -245,31 +245,31 @@ function SwapTest() {
   return false;
 }
 
-function MakeMove(ii, jj, oo) {
-  console.log(ii, jj);
+function MakeMove(i_index, j_index, oo) {
+  console.log(i_index, j_index);
   Timer();
   var ccol,
     kk,
-    iis = ii,
-    jjs = jj;
+    i_indexs = i_index,
+    j_indexs = j_index;
   // if (MoveCount == 1) {
-  //   if (Color[ii][jj] != 0) {
-  //     Color[ii][jj] = 0;
-  //     RefreshPic(ii, jj);
-  //     iis = jj;
-  //     jjs = ii;
+  //   if (Color[i_index][j_index] != 0) {
+  //     Color[i_index][j_index] = 0;
+  //     UpdatePic(i_index, j_index);
+  //     i_indexs = j_index;
+  //     j_indexs = i_index;
   //     IsSwap = 1;
   //   } else IsSwap = 0;
   // }
   ccol = (MoveCount % 2) * 2 - 1;
-  Color[iis][jjs] = ccol;
-  RefreshPic(iis, jjs);
-  if (History[MoveCount][0] != ii) {
-    History[MoveCount][0] = ii;
+  Color[i_indexs][j_indexs] = ccol;
+  UpdatePic(i_indexs, j_indexs);
+  if (GameHistory[MoveCount][0] != i_index) {
+    GameHistory[MoveCount][0] = i_index;
     MaxMoveCount = MoveCount + 1;
   }
-  if (History[MoveCount][1] != jj) {
-    History[MoveCount][1] = jj;
+  if (GameHistory[MoveCount][1] != j_index) {
+    GameHistory[MoveCount][1] = j_index;
     MaxMoveCount = MoveCount + 1;
   }
   MoveCount++;
@@ -284,16 +284,16 @@ function MakeMove(ii, jj, oo) {
   // if ((MoveCount==2)&&(IsSwap>0))   ;
   //   window.document.OptionsForm.Msg.value=" Swap."+window.document.OptionsForm.Msg.value;
   if (!oo) return;
-  GetPot(0);
-  //GetPot(2); ShowPot();
-  WritePot(true);
+  ComputeData(0);
+  //ComputeData(2); ShowComputedValues();
+  WriteCompute(true);
   if (ccol < 0) {
-    if (Pot[ii][jj][2] > 0 || Pot[ii][jj][3] > 0) return;
+    if (ComputedValues[i_index][j_index][2] > 0 || ComputedValues[i_index][j_index][3] > 0) return;
     window.document.OptionsForm.Msg.value = 'Red has won !';
     endGame('Red has won!');
     Blink(0);
   } else {
-    if (Pot[ii][jj][0] > 0 || Pot[ii][jj][1] > 0) return;
+    if (ComputedValues[i_index][j_index][0] > 0 || ComputedValues[i_index][j_index][1] > 0) return;
     window.document.OptionsForm.Msg.value = 'Blue has won !';
     endGame('Blue has won!');
     Blink(0);
@@ -301,110 +301,110 @@ function MakeMove(ii, jj, oo) {
   IsOver = true;
 }
 
-function random(nn) {
-  return Math.floor(Math.random() * 1000) % nn;
+function random(N) {
+  return Math.floor(Math.random() * 1000) % N;
 }
 
-function ShowPot() {
-  var ii, jj;
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++)
-      window.document.images[GameElements_images[ii][jj]].title =
-        Math.round(Pot[ii][jj][2]) +
+function ShowComputedValues() {
+  var i_index, j_index;
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++)
+      window.document.images[GameElementsi_indexmages[i_index][j_index]].title =
+        Math.round(ComputedValues[i_index][j_index][2]) +
         '\n' +
-        Math.round(Pot[ii][jj][0]) +
+        Math.round(ComputedValues[i_index][j_index][0]) +
         '|' +
-        Math.round(Pot[ii][jj][1]) +
+        Math.round(ComputedValues[i_index][j_index][1]) +
         '->' +
-        Math.round(Pot[ii][jj][0] + Pot[ii][jj][1]) +
+        Math.round(ComputedValues[i_index][j_index][0] + ComputedValues[i_index][j_index][1]) +
         '\n' +
-        Math.round(Pot[ii][jj][3]) +
+        Math.round(ComputedValues[i_index][j_index][3]) +
         '->' +
-        Math.round(Pot[ii][jj][2] + Pot[ii][jj][3]) +
+        Math.round(ComputedValues[i_index][j_index][2] + ComputedValues[i_index][j_index][3]) +
         '\n' +
         Math.round(
-          Pot[ii][jj][0] + Pot[ii][jj][1] + Pot[ii][jj][2] + Pot[ii][jj][3]
+          ComputedValues[i_index][j_index][0] + ComputedValues[i_index][j_index][1] + ComputedValues[i_index][j_index][2] + ComputedValues[i_index][j_index][3]
         ) +
         '\n' +
-        Math.round(Bridge[ii][jj][2]) +
+        Math.round(Bridge[i_index][j_index][2]) +
         '\n' +
-        Math.round(Bridge[ii][jj][0]) +
+        Math.round(Bridge[i_index][j_index][0]) +
         '|' +
-        Math.round(Bridge[ii][jj][1]) +
+        Math.round(Bridge[i_index][j_index][1]) +
         '->' +
-        Math.round(Bridge[ii][jj][0] + Bridge[ii][jj][1]) +
+        Math.round(Bridge[i_index][j_index][0] + Bridge[i_index][j_index][1]) +
         '\n' +
-        Math.round(Bridge[ii][jj][3]) +
+        Math.round(Bridge[i_index][j_index][3]) +
         '->' +
-        Math.round(Bridge[ii][jj][2] + Bridge[ii][jj][3]) +
+        Math.round(Bridge[i_index][j_index][2] + Bridge[i_index][j_index][3]) +
         '\n' +
         Math.round(
-          Bridge[ii][jj][0] +
-            Bridge[ii][jj][1] +
-            Bridge[ii][jj][2] +
-            Bridge[ii][jj][3]
+          Bridge[i_index][j_index][0] +
+            Bridge[i_index][j_index][1] +
+            Bridge[i_index][j_index][2] +
+            Bridge[i_index][j_index][3]
         ) +
         '\n' +
         Math.round(
-          Pot[ii][jj][0] +
-            Pot[ii][jj][1] +
-            Pot[ii][jj][2] +
-            Pot[ii][jj][3] -
-            Bridge[ii][jj][0] -
-            Bridge[ii][jj][1] -
-            Bridge[ii][jj][2] -
-            Bridge[ii][jj][3]
+          ComputedValues[i_index][j_index][0] +
+            ComputedValues[i_index][j_index][1] +
+            ComputedValues[i_index][j_index][2] +
+            ComputedValues[i_index][j_index][3] -
+            Bridge[i_index][j_index][0] -
+            Bridge[i_index][j_index][1] -
+            Bridge[i_index][j_index][2] -
+            Bridge[i_index][j_index][3]
         );
   }
 }
 
-function RedPotCol(vv) {
+function ComputeRedData(vv) {
   var xx = 0,
     hh = '0123456789abcdef';
   if (vv > 0) xx = vv;
-  var nn = Math.floor(255 / (1 + xx / 255));
-  return '#' + hh.charAt(Math.floor(nn / 16)) + hh.charAt(nn % 16) + '0000';
+  var N = Math.floor(255 / (1 + xx / 255));
+  return '#' + hh.charAt(Math.floor(N / 16)) + hh.charAt(N % 16) + '0000';
 }
 
-function BluePotCol(vv) {
+function ComputeBlueData(vv) {
   var xx = 0,
     hh = '0123456789abcdef';
   if (vv > 0) xx = vv;
-  var nn = Math.floor(255 / (1 + xx / 255));
-  return '#0000' + hh.charAt(Math.floor(nn / 16)) + hh.charAt(nn % 16);
+  var N = Math.floor(255 / (1 + xx / 255));
+  return '#0000' + hh.charAt(Math.floor(N / 16)) + hh.charAt(N % 16);
 }
 
-function WritePot(bb) {
+function WriteCompute(bb) {
   return false;
-  var ii, jj;
+  var i_index, j_index;
   if (!IsAI) return;
-  if (bb) GetPot(2);
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++) {
-      window.document.getElementById('Pot0' + ii + jj).title = Math.round(
-        Pot[ii][jj][0]
+  if (bb) ComputeData(2);
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++) {
+      window.document.getElementById('ComputedValues0' + i_index + j_index).title = Math.round(
+        ComputedValues[i_index][j_index][0]
       );
-      window.document.getElementById('Pot1' + ii + jj).title = Math.round(
-        Pot[ii][jj][1]
+      window.document.getElementById('ComputedValues1' + i_index + j_index).title = Math.round(
+        ComputedValues[i_index][j_index][1]
       );
-      window.document.getElementById('Pot2' + ii + jj).title = Math.round(
-        Pot[ii][jj][2]
+      window.document.getElementById('ComputedValues2' + i_index + j_index).title = Math.round(
+        ComputedValues[i_index][j_index][2]
       );
-      window.document.getElementById('Pot3' + ii + jj).title = Math.round(
-        Pot[ii][jj][3]
+      window.document.getElementById('ComputedValues3' + i_index + j_index).title = Math.round(
+        ComputedValues[i_index][j_index][3]
       );
       window.document.getElementById(
-        'Pot0' + ii + jj
-      ).style.backgroundColor = BluePotCol(Pot[ii][jj][0]);
+        'ComputedValues0' + i_index + j_index
+      ).style.backgroundColor = ComputeBlueData(ComputedValues[i_index][j_index][0]);
       window.document.getElementById(
-        'Pot1' + ii + jj
-      ).style.backgroundColor = BluePotCol(Pot[ii][jj][1]);
+        'ComputedValues1' + i_index + j_index
+      ).style.backgroundColor = ComputeBlueData(ComputedValues[i_index][j_index][1]);
       window.document.getElementById(
-        'Pot2' + ii + jj
-      ).style.backgroundColor = RedPotCol(Pot[ii][jj][2]);
+        'ComputedValues2' + i_index + j_index
+      ).style.backgroundColor = ComputeRedData(ComputedValues[i_index][j_index][2]);
       window.document.getElementById(
-        'Pot3' + ii + jj
-      ).style.backgroundColor = RedPotCol(Pot[ii][jj][3]);
+        'ComputedValues3' + i_index + j_index
+      ).style.backgroundColor = ComputeRedData(ComputedValues[i_index][j_index][3]);
     }
   }
 }
@@ -417,166 +417,166 @@ function sign(xx) {
 
 function GetBestMove(theCol, theLevel) {
   return false;
-  var ii,
-    jj,
+  var i_index,
+    j_index,
     kk,
-    ii_b,
-    jj_b,
+    i_index_b,
+    j_index_b,
     ff = 0,
-    ii_q = 0,
-    jj_q = 0,
+    i_index_q = 0,
+    j_index_q = 0,
     cc,
     pp0,
     pp1;
   vv = new Array();
   if (MoveCount > 0) ff = 190 / (MoveCount * MoveCount);
-  mm = 20000;
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++) {
-      if (Color[ii][jj] != 0) {
-        ii_q += 2 * ii + 1 - Size;
-        jj_q += 2 * jj + 1 - Size;
+  M = 20000;
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++) {
+      if (Color[i_index][j_index] != 0) {
+        i_index_q += 2 * i_index + 1 - Size;
+        j_index_q += 2 * j_index + 1 - Size;
       }
     }
   }
-  ii_q = sign(ii_q);
-  jj_q = sign(jj_q);
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++) {
-      if (Color[ii][jj] == 0) {
-        mmp = Math.random() * (49 - theLevel * 16);
-        mmp += (Math.abs(ii - 5) + Math.abs(jj - 5)) * ff;
-        mmp += (8 * (ii_q * (ii - 5) + jj_q * (jj - 5))) / (MoveCount + 1);
+  i_index_q = sign(i_index_q);
+  j_index_q = sign(j_index_q);
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++) {
+      if (Color[i_index][j_index] == 0) {
+        Mp = Math.random() * (49 - theLevel * 16);
+        Mp += (Math.abs(i_index - 5) + Math.abs(j_index - 5)) * ff;
+        Mp += (8 * (i_index_q * (i_index - 5) + j_index_q * (j_index - 5))) / (MoveCount + 1);
         if (theLevel > 2) {
-          for (kk = 0; kk < 4; kk++) mmp -= Bridge[ii][jj][kk];
+          for (kk = 0; kk < 4; kk++) Mp -= Bridge[i_index][j_index][kk];
         }
-        pp0 = Pot[ii][jj][0] + Pot[ii][jj][1];
-        pp1 = Pot[ii][jj][2] + Pot[ii][jj][3];
-        mmp += pp0 + pp1;
-        if (pp0 <= 268 || pp1 <= 268) mmp -= 400; //140+128
-        vv[ii * Size + jj] = mmp;
-        if (mmp < mm) {
-          mm = mmp;
-          ii_b = ii;
-          jj_b = jj;
+        pp0 = ComputedValues[i_index][j_index][0] + ComputedValues[i_index][j_index][1];
+        pp1 = ComputedValues[i_index][j_index][2] + ComputedValues[i_index][j_index][3];
+        Mp += pp0 + pp1;
+        if (pp0 <= 268 || pp1 <= 268) Mp -= 400; //140+128
+        vv[i_index * Size + j_index] = Mp;
+        if (Mp < M) {
+          M = Mp;
+          i_index_b = i_index;
+          j_index_b = j_index;
         }
       }
     }
   }
   if (theLevel > 2) {
-    mm += 108;
-    for (ii = 0; ii < Size; ii++) {
-      for (jj = 0; jj < Size; jj++) {
-        if (vv[ii * Size + jj] < mm) {
+    M += 108;
+    for (i_index = 0; i_index < Size; i_index++) {
+      for (j_index = 0; j_index < Size; j_index++) {
+        if (vv[i_index * Size + j_index] < M) {
           if (theCol < 0) {
             //red
-            if (ii > 3 && ii < Size - 1 && jj > 0 && jj < 3) {
-              if (Color[ii - 1][jj + 2] == -theCol) {
-                cc = CanConnectFarBorder(ii - 1, jj + 2, -theCol);
+            if (i_index > 3 && i_index < Size - 1 && j_index > 0 && j_index < 3) {
+              if (Color[i_index - 1][j_index + 2] == -theCol) {
+                cc = isConnected(i_index - 1, j_index + 2, -theCol);
                 if (cc < 2) {
-                  ii_b = ii;
+                  i_index_b = i_index;
                   if (cc < -1) {
-                    ii_b--;
+                    i_index_b--;
                     cc++;
                   }
-                  jj_b = jj - cc;
-                  mm = vv[ii * Size + jj];
+                  j_index_b = j_index - cc;
+                  M = vv[i_index * Size + j_index];
                 }
               }
             }
-            if (ii > 0 && ii < Size - 1 && jj == 0) {
+            if (i_index > 0 && i_index < Size - 1 && j_index == 0) {
               if (
-                Color[ii - 1][jj + 2] == -theCol &&
-                Color[ii - 1][jj] == 0 &&
-                Color[ii - 1][jj + 1] == 0 &&
-                Color[ii][jj + 1] == 0 &&
-                Color[ii + 1][jj] == 0
+                Color[i_index - 1][j_index + 2] == -theCol &&
+                Color[i_index - 1][j_index] == 0 &&
+                Color[i_index - 1][j_index + 1] == 0 &&
+                Color[i_index][j_index + 1] == 0 &&
+                Color[i_index + 1][j_index] == 0
               ) {
-                ii_b = ii;
-                jj_b = jj;
-                mm = vv[ii * Size + jj];
+                i_index_b = i_index;
+                j_index_b = j_index;
+                M = vv[i_index * Size + j_index];
               }
             }
-            if (ii > 0 && ii < Size - 4 && jj < Size - 1 && jj > Size - 4) {
-              if (Color[ii + 1][jj - 2] == -theCol) {
-                cc = CanConnectFarBorder(ii + 1, jj - 2, -theCol);
+            if (i_index > 0 && i_index < Size - 4 && j_index < Size - 1 && j_index > Size - 4) {
+              if (Color[i_index + 1][j_index - 2] == -theCol) {
+                cc = isConnected(i_index + 1, j_index - 2, -theCol);
                 if (cc < 2) {
-                  ii_b = ii;
+                  i_index_b = i_index;
                   if (cc < -1) {
-                    ii_b++;
+                    i_index_b++;
                     cc++;
                   }
-                  jj_b = jj + cc;
-                  mm = vv[ii * Size + jj];
+                  j_index_b = j_index + cc;
+                  M = vv[i_index * Size + j_index];
                 }
               }
             }
-            if (ii > 0 && ii < Size - 1 && jj == Size - 1) {
+            if (i_index > 0 && i_index < Size - 1 && j_index == Size - 1) {
               if (
-                Color[ii + 1][jj - 2] == -theCol &&
-                Color[ii + 1][jj] == 0 &&
-                Color[ii + 1][jj - 1] == 0 &&
-                Color[ii][jj - 1] == 0 &&
-                Color[ii - 1][jj] == 0
+                Color[i_index + 1][j_index - 2] == -theCol &&
+                Color[i_index + 1][j_index] == 0 &&
+                Color[i_index + 1][j_index - 1] == 0 &&
+                Color[i_index][j_index - 1] == 0 &&
+                Color[i_index - 1][j_index] == 0
               ) {
-                ii_b = ii;
-                jj_b = jj;
-                mm = vv[ii * Size + jj];
+                i_index_b = i_index;
+                j_index_b = j_index;
+                M = vv[i_index * Size + j_index];
               }
             }
           } else {
-            if (jj > 3 && jj < Size - 1 && ii > 0 && ii < 3) {
-              if (Color[ii + 2][jj - 1] == -theCol) {
-                cc = CanConnectFarBorder(ii + 2, jj - 1, -theCol);
+            if (j_index > 3 && j_index < Size - 1 && i_index > 0 && i_index < 3) {
+              if (Color[i_index + 2][j_index - 1] == -theCol) {
+                cc = isConnected(i_index + 2, j_index - 1, -theCol);
                 if (cc < 2) {
-                  jj_b = jj;
+                  j_index_b = j_index;
                   if (cc < -1) {
-                    jj_b--;
+                    j_index_b--;
                     cc++;
                   }
-                  ii_b = ii - cc;
-                  mm = vv[ii * Size + jj];
+                  i_index_b = i_index - cc;
+                  M = vv[i_index * Size + j_index];
                 }
               }
             }
-            if (jj > 0 && jj < Size - 1 && ii == 0) {
+            if (j_index > 0 && j_index < Size - 1 && i_index == 0) {
               if (
-                Color[ii + 2][jj - 1] == -theCol &&
-                Color[ii][jj - 1] == 0 &&
-                Color[ii + 1][jj - 1] == 0 &&
-                Color[ii + 1][jj] == 0 &&
-                Color[ii][jj + 1] == 0
+                Color[i_index + 2][j_index - 1] == -theCol &&
+                Color[i_index][j_index - 1] == 0 &&
+                Color[i_index + 1][j_index - 1] == 0 &&
+                Color[i_index + 1][j_index] == 0 &&
+                Color[i_index][j_index + 1] == 0
               ) {
-                ii_b = ii;
-                jj_b = jj;
-                mm = vv[ii * Size + jj];
+                i_index_b = i_index;
+                j_index_b = j_index;
+                M = vv[i_index * Size + j_index];
               }
             }
-            if (jj > 0 && jj < Size - 4 && ii < Size - 1 && ii > Size - 4) {
-              if (Color[ii - 2][jj + 1] == -theCol) {
-                cc = CanConnectFarBorder(ii - 2, jj + 1, -theCol);
+            if (j_index > 0 && j_index < Size - 4 && i_index < Size - 1 && i_index > Size - 4) {
+              if (Color[i_index - 2][j_index + 1] == -theCol) {
+                cc = isConnected(i_index - 2, j_index + 1, -theCol);
                 if (cc < 2) {
-                  jj_b = jj;
+                  j_index_b = j_index;
                   if (cc < -1) {
-                    jj_b++;
+                    j_index_b++;
                     cc++;
                   }
-                  ii_b = ii + cc;
-                  mm = vv[ii * Size + jj];
+                  i_index_b = i_index + cc;
+                  M = vv[i_index * Size + j_index];
                 }
               }
             }
-            if (jj > 0 && jj < Size - 1 && ii == Size - 1) {
+            if (j_index > 0 && j_index < Size - 1 && i_index == Size - 1) {
               if (
-                Color[ii - 2][jj + 1] == -theCol &&
-                Color[ii][jj + 1] == 0 &&
-                Color[ii - 1][jj + 1] == 0 &&
-                Color[ii - 1][jj] == 0 &&
-                Color[ii][jj - 1] == 0
+                Color[i_index - 2][j_index + 1] == -theCol &&
+                Color[i_index][j_index + 1] == 0 &&
+                Color[i_index - 1][j_index + 1] == 0 &&
+                Color[i_index - 1][j_index] == 0 &&
+                Color[i_index][j_index - 1] == 0
               ) {
-                ii_b = ii;
-                jj_b = jj;
-                mm = vv[ii * Size + jj];
+                i_index_b = i_index;
+                j_index_b = j_index;
+                M = vv[i_index * Size + j_index];
               }
             }
           }
@@ -584,19 +584,19 @@ function GetBestMove(theCol, theLevel) {
       }
     }
   }
-  MakeMove(ii_b, jj_b, false);
-  IsRunning = false;
+  MakeMove(i_index_b, j_index_b, false);
+  IsRuNing = false;
   if (theCol < 0) {
-    if (Pot[ii_b][jj_b][2] > 140 || Pot[ii_b][jj_b][3] > 140) {
-      WritePot(false);
+    if (ComputedValues[i_index_b][j_index_b][2] > 140 || ComputedValues[i_index_b][j_index_b][3] > 140) {
+      WriteCompute(false);
       return;
     }
     window.document.OptionsForm.Msg.value = 'Red has won !';
     endGame('Red has won!');
     Blink(-2);
   } else {
-    if (Pot[ii_b][jj_b][0] > 140 || Pot[ii_b][jj_b][1] > 140) {
-      WritePot(false);
+    if (ComputedValues[i_index_b][j_index_b][0] > 140 || ComputedValues[i_index_b][j_index_b][1] > 140) {
+      WriteCompute(false);
       return;
     }
     window.document.OptionsForm.Msg.value = 'Blue has won !';
@@ -606,223 +606,223 @@ function GetBestMove(theCol, theLevel) {
   IsOver = true;
 }
 
-function CanConnectFarBorder(nn, mm, cc) {
-  var ii, jj;
+function isConnected(N, M, cc) {
+  var i_index, j_index;
   if (cc > 0) {
     //blue
-    if (2 * mm < Size - 1) {
-      for (ii = 0; ii < Size; ii++) {
-        for (jj = 0; jj < mm; jj++) {
-          if (jj - ii < mm - nn && ii + jj <= nn + mm && Color[ii][jj] != 0)
+    if (2 * M < Size - 1) {
+      for (i_index = 0; i_index < Size; i_index++) {
+        for (j_index = 0; j_index < M; j_index++) {
+          if (j_index - i_index < M - N && i_index + j_index <= N + M && Color[i_index][j_index] != 0)
             return 2;
         }
       }
-      if (Color[nn - 1][mm] == -cc) return 0;
-      if (Color[nn - 1][mm - 1] == -cc) {
-        if (GetColor(nn + 2, mm - 1) == -cc) return 0;
+      if (Color[N - 1][M] == -cc) return 0;
+      if (Color[N - 1][M - 1] == -cc) {
+        if (GetColor(N + 2, M - 1) == -cc) return 0;
         return -1;
       }
-      if (GetColor(nn + 2, mm - 1) == -cc) return -2;
+      if (GetColor(N + 2, M - 1) == -cc) return -2;
     } else {
-      for (ii = 0; ii < Size; ii++) {
-        for (jj = Size - 1; jj > mm; jj--) {
-          if (jj - ii > mm - nn && ii + jj >= nn + mm && Color[ii][jj] != 0)
+      for (i_index = 0; i_index < Size; i_index++) {
+        for (j_index = Size - 1; j_index > M; j_index--) {
+          if (j_index - i_index > M - N && i_index + j_index >= N + M && Color[i_index][j_index] != 0)
             return 2;
         }
       }
-      if (Color[nn + 1][mm] == -cc) return 0;
-      if (Color[nn + 1][mm + 1] == -cc) {
-        if (GetColor(nn - 2, mm + 1) == -cc) return 0;
+      if (Color[N + 1][M] == -cc) return 0;
+      if (Color[N + 1][M + 1] == -cc) {
+        if (GetColor(N - 2, M + 1) == -cc) return 0;
         return -1;
       }
-      if (GetColor(nn - 2, mm + 1) == -cc) return -2;
+      if (GetColor(N - 2, M + 1) == -cc) return -2;
     }
   } else {
-    if (2 * nn < Size - 1) {
-      for (jj = 0; jj < Size; jj++) {
-        for (ii = 0; ii < nn; ii++) {
-          if (ii - jj < nn - mm && ii + jj <= nn + mm && Color[ii][jj] != 0)
+    if (2 * N < Size - 1) {
+      for (j_index = 0; j_index < Size; j_index++) {
+        for (i_index = 0; i_index < N; i_index++) {
+          if (i_index - j_index < N - M && i_index + j_index <= N + M && Color[i_index][j_index] != 0)
             return 2;
         }
       }
-      if (Color[nn][mm - 1] == -cc) return 0;
-      if (Color[nn - 1][mm - 1] == -cc) {
-        if (GetColor(nn - 1, mm + 2) == -cc) return 0;
+      if (Color[N][M - 1] == -cc) return 0;
+      if (Color[N - 1][M - 1] == -cc) {
+        if (GetColor(N - 1, M + 2) == -cc) return 0;
         return -1;
       }
-      if (GetColor(nn - 1, mm + 2) == -cc) return -2;
+      if (GetColor(N - 1, M + 2) == -cc) return -2;
     } else {
-      for (jj = 0; jj < Size; jj++) {
-        for (ii = Size - 1; ii > nn; ii--) {
-          if (ii - jj > nn - mm && ii + jj >= nn + mm && Color[ii][jj] != 0)
+      for (j_index = 0; j_index < Size; j_index++) {
+        for (i_index = Size - 1; i_index > N; i_index--) {
+          if (i_index - j_index > N - M && i_index + j_index >= N + M && Color[i_index][j_index] != 0)
             return 2;
         }
       }
-      if (Color[nn][mm + 1] == -cc) return 0;
-      if (Color[nn + 1][mm + 1] == -cc) {
-        if (GetColor(nn + 1, mm - 2) == -cc) return 0;
+      if (Color[N][M + 1] == -cc) return 0;
+      if (Color[N + 1][M + 1] == -cc) {
+        if (GetColor(N + 1, M - 2) == -cc) return 0;
         return -1;
       }
-      if (GetColor(nn + 1, mm - 2) == -cc) return -2;
+      if (GetColor(N + 1, M - 2) == -cc) return -2;
     }
   }
   return 1;
 }
 
-function GetColor(ii, jj) {
-  if (ii < 0) return -1;
-  if (jj < 0) return 1;
-  if (ii >= Size) return -1;
-  if (jj >= Size) return 1;
-  return Color[ii][jj];
+function GetColor(i_index, j_index) {
+  if (i_index < 0) return -1;
+  if (j_index < 0) return 1;
+  if (i_index >= Size) return -1;
+  if (j_index >= Size) return 1;
+  return Color[i_index][j_index];
 }
 
-function Blink(nn) {
-  IsRunning = true;
-  if (nn == -2) {
+function Blink(N) {
+  IsRuNing = true;
+  if (N == -2) {
     setTimeout('Blink(-1)', 10);
     return;
   }
-  if (nn == -1) {
-    GetPot(0);
-    WritePot(false);
+  if (N == -1) {
+    ComputeData(0);
+    WriteCompute(false);
     setTimeout('Blink(0)', 10);
     return;
   }
-  if (nn == 14) {
-    IsRunning = false;
+  if (N == 14) {
+    IsRuNing = false;
     return;
   }
-  var ii,
-    jj,
-    cc = (nn % 2) * (((MoveCount + 1) % 2) * 2 - 1);
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++) {
+  var i_index,
+    j_index,
+    cc = (N % 2) * (((MoveCount + 1) % 2) * 2 - 1);
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++) {
       if (
-        Pot[ii][jj][0] + Pot[ii][jj][1] <= 0 ||
-        Pot[ii][jj][2] + Pot[ii][jj][3] <= 0
+        ComputedValues[i_index][j_index][0] + ComputedValues[i_index][j_index][1] <= 0 ||
+        ComputedValues[i_index][j_index][2] + ComputedValues[i_index][j_index][3] <= 0
       ) {
-        Color[ii][jj] = cc;
-        RefreshPic(ii, jj);
+        Color[i_index][j_index] = cc;
+        UpdatePic(i_index, j_index);
       }
     }
   }
-  setTimeout('Blink(' + eval(nn + 1) + ')', 200);
+  setTimeout('Blink(' + eval(N + 1) + ')', 200);
 }
 
-function GetPot(llevel) {
-  var ii,
-    jj,
+function ComputeData(llevel) {
+  var i_index,
+    j_index,
     kk,
-    mm,
-    mmp,
-    nn,
+    M,
+    Mp,
+    N,
     bb,
     dd = 128;
   ActiveColor = ((MoveCount + 1 + Start0) % 2) * 2 - 1;
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++) {
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++) {
       for (kk = 0; kk < 4; kk++) {
-        Pot[ii][jj][kk] = 20000;
-        Bridge[ii][jj][kk] = 0;
+        ComputedValues[i_index][j_index][kk] = 20000;
+        Bridge[i_index][j_index][kk] = 0;
       }
     }
   }
-  for (ii = 0; ii < Size; ii++) {
-    if (Color[ii][0] == 0) Pot[ii][0][0] = dd;
+  for (i_index = 0; i_index < Size; i_index++) {
+    if (Color[i_index][0] == 0) ComputedValues[i_index][0][0] = dd;
     //blue border
     else {
-      if (Color[ii][0] > 0) Pot[ii][0][0] = 0;
+      if (Color[i_index][0] > 0) ComputedValues[i_index][0][0] = 0;
     }
-    if (Color[ii][Size - 1] == 0) Pot[ii][Size - 1][1] = dd;
+    if (Color[i_index][Size - 1] == 0) ComputedValues[i_index][Size - 1][1] = dd;
     //blue border
     else {
-      if (Color[ii][Size - 1] > 0) Pot[ii][Size - 1][1] = 0;
+      if (Color[i_index][Size - 1] > 0) ComputedValues[i_index][Size - 1][1] = 0;
     }
   }
-  for (jj = 0; jj < Size; jj++) {
-    if (Color[0][jj] == 0) Pot[0][jj][2] = dd;
+  for (j_index = 0; j_index < Size; j_index++) {
+    if (Color[0][j_index] == 0) ComputedValues[0][j_index][2] = dd;
     //red border
     else {
-      if (Color[0][jj] < 0) Pot[0][jj][2] = 0;
+      if (Color[0][j_index] < 0) ComputedValues[0][j_index][2] = 0;
     }
-    if (Color[Size - 1][jj] == 0) Pot[Size - 1][jj][3] = dd;
+    if (Color[Size - 1][j_index] == 0) ComputedValues[Size - 1][j_index][3] = dd;
     //red border
     else {
-      if (Color[Size - 1][jj] < 0) Pot[Size - 1][jj][3] = 0;
+      if (Color[Size - 1][j_index] < 0) ComputedValues[Size - 1][j_index][3] = 0;
     }
   }
   for (
     kk = 0;
     kk < 2;
-    kk++ //blue potential
+    kk++ //blue ComputedValuesential
   ) {
-    for (ii = 0; ii < Size; ii++) {
-      for (jj = 0; jj < Size; jj++) Upd[ii][jj] = true;
+    for (i_index = 0; i_index < Size; i_index++) {
+      for (j_index = 0; j_index < Size; j_index++) Upd[i_index][j_index] = true;
     }
-    nn = 0;
+    N = 0;
     do {
-      nn++;
+      N++;
       bb = 0;
-      for (ii = 0; ii < Size; ii++) {
-        for (jj = 0; jj < Size; jj++) {
-          if (Upd[ii][jj]) bb += SetPot(ii, jj, kk, 1, llevel);
+      for (i_index = 0; i_index < Size; i_index++) {
+        for (j_index = 0; j_index < Size; j_index++) {
+          if (Upd[i_index][j_index]) bb += SetComputedValues(i_index, j_index, kk, 1, llevel);
         }
       }
-      for (ii = Size - 1; ii >= 0; ii--) {
-        for (jj = Size - 1; jj >= 0; jj--) {
-          if (Upd[ii][jj]) bb += SetPot(ii, jj, kk, 1, llevel);
+      for (i_index = Size - 1; i_index >= 0; i_index--) {
+        for (j_index = Size - 1; j_index >= 0; j_index--) {
+          if (Upd[i_index][j_index]) bb += SetComputedValues(i_index, j_index, kk, 1, llevel);
         }
       }
-    } while (bb > 0 && nn < 12);
+    } while (bb > 0 && N < 12);
   }
   for (
     kk = 2;
     kk < 4;
-    kk++ //red potential
+    kk++ //red ComputedValuesential
   ) {
-    for (ii = 0; ii < Size; ii++) {
-      for (jj = 0; jj < Size; jj++) Upd[ii][jj] = true;
+    for (i_index = 0; i_index < Size; i_index++) {
+      for (j_index = 0; j_index < Size; j_index++) Upd[i_index][j_index] = true;
     }
-    nn = 0;
+    N = 0;
     do {
-      nn++;
+      N++;
       bb = 0;
-      for (ii = 0; ii < Size; ii++) {
-        for (jj = 0; jj < Size; jj++) {
-          if (Upd[ii][jj]) bb += SetPot(ii, jj, kk, -1, llevel);
+      for (i_index = 0; i_index < Size; i_index++) {
+        for (j_index = 0; j_index < Size; j_index++) {
+          if (Upd[i_index][j_index]) bb += SetComputedValues(i_index, j_index, kk, -1, llevel);
         }
       }
-      for (ii = Size - 1; ii >= 0; ii--) {
-        for (jj = Size - 1; jj >= 0; jj--) {
-          if (Upd[ii][jj]) bb += SetPot(ii, jj, kk, -1, llevel);
+      for (i_index = Size - 1; i_index >= 0; i_index--) {
+        for (j_index = Size - 1; j_index >= 0; j_index--) {
+          if (Upd[i_index][j_index]) bb += SetComputedValues(i_index, j_index, kk, -1, llevel);
         }
       }
-    } while (bb > 0 && nn < 12);
+    } while (bb > 0 && N < 12);
   }
 }
 
 var vv = new Array(6);
 var tt = new Array(6);
 
-function SetPot(ii, jj, kk, cc, llevel) {
-  Upd[ii][jj] = false;
-  Bridge[ii][jj][kk] = 0;
-  if (Color[ii][jj] == -cc) return 0;
+function SetComputedValues(i_index, j_index, kk, cc, llevel) {
+  Upd[i_index][j_index] = false;
+  Bridge[i_index][j_index][kk] = 0;
+  if (Color[i_index][j_index] == -cc) return 0;
   var ll,
-    mm,
+    M,
     ddb = 0,
-    nn,
+    N,
     oo = 0,
     dd = 140,
     bb = 66;
   if (cc != ActiveColor) bb = 52;
-  vv[0] = PotVal(ii + 1, jj, kk, cc);
-  vv[1] = PotVal(ii, jj + 1, kk, cc);
-  vv[2] = PotVal(ii - 1, jj + 1, kk, cc);
-  vv[3] = PotVal(ii - 1, jj, kk, cc);
-  vv[4] = PotVal(ii, jj - 1, kk, cc);
-  vv[5] = PotVal(ii + 1, jj - 1, kk, cc);
+  vv[0] = ComputedValuesVal(i_index + 1, j_index, kk, cc);
+  vv[1] = ComputedValuesVal(i_index, j_index + 1, kk, cc);
+  vv[2] = ComputedValuesVal(i_index - 1, j_index + 1, kk, cc);
+  vv[3] = ComputedValuesVal(i_index - 1, j_index, kk, cc);
+  vv[4] = ComputedValuesVal(i_index, j_index - 1, kk, cc);
+  vv[5] = ComputedValuesVal(i_index + 1, j_index - 1, kk, cc);
   for (ll = 0; ll < 6; ll++) {
     if (vv[ll] >= 30000 && vv[(ll + 2) % 6] >= 30000) {
       if (vv[(ll + 1) % 6] < 0) ddb = +32;
@@ -834,116 +834,116 @@ function SetPot(ii, jj, kk, cc, llevel) {
       ddb += 30;
     }
   }
-  mm = 30000;
+  M = 30000;
   for (ll = 0; ll < 6; ll++) {
     if (vv[ll] < 0) {
       vv[ll] += 30000;
       tt[ll] = 10;
     } else tt[ll] = 1;
-    if (mm > vv[ll]) mm = vv[ll];
+    if (M > vv[ll]) M = vv[ll];
   }
-  nn = 0;
+  N = 0;
   for (ll = 0; ll < 6; ll++) {
-    if (vv[ll] == mm) nn += tt[ll];
+    if (vv[ll] == M) N += tt[ll];
   }
   if (llevel > 1) {
-    Bridge[ii][jj][kk] = nn / 5;
-    if (nn >= 2 && nn < 10) {
-      Bridge[ii][jj][kk] = bb + nn - 2;
-      mm -= 32;
+    Bridge[i_index][j_index][kk] = N / 5;
+    if (N >= 2 && N < 10) {
+      Bridge[i_index][j_index][kk] = bb + N - 2;
+      M -= 32;
     }
-    if (nn < 2) {
+    if (N < 2) {
       oo = 30000;
       for (ll = 0; ll < 6; ll++) {
-        if (vv[ll] > mm && oo > vv[ll]) oo = vv[ll];
+        if (vv[ll] > M && oo > vv[ll]) oo = vv[ll];
       }
-      if (oo <= mm + 104) {
-        Bridge[ii][jj][kk] = bb - (oo - mm) / 4;
-        mm -= 64;
+      if (oo <= M + 104) {
+        Bridge[i_index][j_index][kk] = bb - (oo - M) / 4;
+        M -= 64;
       }
-      mm += oo;
-      mm /= 2;
+      M += oo;
+      M /= 2;
     }
   }
 
-  if (ii > 0 && ii < Size - 1 && jj > 0 && jj < Size - 1)
-    Bridge[ii][jj][kk] += ddb;
-  else Bridge[ii][jj][kk] -= 2;
-  if ((ii == 0 || ii == Size - 1) && (jj == 0 || jj == Size - 1))
-    Bridge[ii][jj][kk] /= 2; // /=4
-  if (Bridge[ii][jj][kk] > 68) Bridge[ii][jj][kk] = 68; //66
+  if (i_index > 0 && i_index < Size - 1 && j_index > 0 && j_index < Size - 1)
+    Bridge[i_index][j_index][kk] += ddb;
+  else Bridge[i_index][j_index][kk] -= 2;
+  if ((i_index == 0 || i_index == Size - 1) && (j_index == 0 || j_index == Size - 1))
+    Bridge[i_index][j_index][kk] /= 2; // /=4
+  if (Bridge[i_index][j_index][kk] > 68) Bridge[i_index][j_index][kk] = 68; //66
 
-  if (Color[ii][jj] == cc) {
-    if (mm < Pot[ii][jj][kk]) {
-      Pot[ii][jj][kk] = mm;
-      SetUpd(ii + 1, jj, cc);
-      SetUpd(ii, jj + 1, cc);
-      SetUpd(ii - 1, jj + 1, cc);
-      SetUpd(ii - 1, jj, cc);
-      SetUpd(ii, jj - 1, cc);
-      SetUpd(ii + 1, jj - 1, cc);
+  if (Color[i_index][j_index] == cc) {
+    if (M < ComputedValues[i_index][j_index][kk]) {
+      ComputedValues[i_index][j_index][kk] = M;
+      SetUpd(i_index + 1, j_index, cc);
+      SetUpd(i_index, j_index + 1, cc);
+      SetUpd(i_index - 1, j_index + 1, cc);
+      SetUpd(i_index - 1, j_index, cc);
+      SetUpd(i_index, j_index - 1, cc);
+      SetUpd(i_index + 1, j_index - 1, cc);
       return 1;
     }
     return 0;
   }
-  if (mm + dd < Pot[ii][jj][kk]) {
-    Pot[ii][jj][kk] = mm + dd;
-    SetUpd(ii + 1, jj, cc);
-    SetUpd(ii, jj + 1, cc);
-    SetUpd(ii - 1, jj + 1, cc);
-    SetUpd(ii - 1, jj, cc);
-    SetUpd(ii, jj - 1, cc);
-    SetUpd(ii + 1, jj - 1, cc);
+  if (M + dd < ComputedValues[i_index][j_index][kk]) {
+    ComputedValues[i_index][j_index][kk] = M + dd;
+    SetUpd(i_index + 1, j_index, cc);
+    SetUpd(i_index, j_index + 1, cc);
+    SetUpd(i_index - 1, j_index + 1, cc);
+    SetUpd(i_index - 1, j_index, cc);
+    SetUpd(i_index, j_index - 1, cc);
+    SetUpd(i_index + 1, j_index - 1, cc);
     return 1;
   }
   return 0;
 }
 
-function PotVal(ii, jj, kk, cc) {
-  if (ii < 0) return 30000;
-  if (jj < 0) return 30000;
-  if (ii >= Size) return 30000;
-  if (jj >= Size) return 30000;
-  if (Color[ii][jj] == 0) return Pot[ii][jj][kk];
-  if (Color[ii][jj] == -cc) return 30000;
-  return Pot[ii][jj][kk] - 30000;
+function ComputedValuesVal(i_index, j_index, kk, cc) {
+  if (i_index < 0) return 30000;
+  if (j_index < 0) return 30000;
+  if (i_index >= Size) return 30000;
+  if (j_index >= Size) return 30000;
+  if (Color[i_index][j_index] == 0) return ComputedValues[i_index][j_index][kk];
+  if (Color[i_index][j_index] == -cc) return 30000;
+  return ComputedValues[i_index][j_index][kk] - 30000;
 }
 
-function SetUpd(ii, jj, cc) {
-  if (ii < 0) return;
-  if (jj < 0) return;
-  if (ii >= Size) return;
-  if (jj >= Size) return;
-  Upd[ii][jj] = true;
+function SetUpd(i_index, j_index, cc) {
+  if (i_index < 0) return;
+  if (j_index < 0) return;
+  if (i_index >= Size) return;
+  if (j_index >= Size) return;
+  Upd[i_index][j_index] = true;
 }
 
-function Clicked(ii, jj) {
+function Clicked(i_index, j_index) {
   if (IsOver) return;
-  // if (IsRunning) {
-  //   console.log('inside is running');
-  //   LastEvent = 'Clicked(' + ii + ',' + jj + ')';
+  // if (IsRuNing) {
+  //   console.log('inside is ruNing');
+  //   LastEvent = 'Clicked(' + i_index + ',' + j_index + ')';
   //   //  return;
   // }
-  if (Color[ii][jj] != 0) {
-    if (MoveCount == 1 && false) MakeMove(ii, jj, false);
+  if (Color[i_index][j_index] != 0) {
+    if (MoveCount == 1 && false) MakeMove(i_index, j_index, false);
     return;
   }
   if (!IsPlayer[(MoveCount + Start0 + 1) % 2]) return;
-  MakeMove(ii, jj, true);
+  MakeMove(i_index, j_index, true);
   startstop();
   socket.emit('playTurn', {
-    i: ii,
-    j: jj,
+    i: i_index,
+    j: j_index,
     room: room,
   });
   $("#Moves").val(GetMoveList());
 }
 
-function RefreshPic(ii, jj) {
-  console.log(ii);
-  console.log(jj);
-  console.log(Color[ii][jj]);
-  window.document.images[GameElements_images[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
+function UpdatePic(i_index, j_index) {
+  console.log(i_index);
+  console.log(j_index);
+  console.log(Color[i_index][j_index]);
+  window.document.images[GameElementsi_indexmages[i_index][j_index]].src = Pic[1 + Color[i_index][j_index]].src;
   // if (MoveCount<10)
   //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
   // else
@@ -951,43 +951,13 @@ function RefreshPic(ii, jj) {
 }
 
 function RefreshScreen() {
-  for (ii = 0; ii < Size; ii++) {
-    for (jj = 0; jj < Size; jj++)
-      document.images[GameElements_images[ii][jj]].src = Pic[1 + Color[ii][jj]].src;
+  for (i_index = 0; i_index < Size; i_index++) {
+    for (j_index = 0; j_index < Size; j_index++)
+      document.images[GameElementsi_indexmages[i_index][j_index]].src = Pic[1 + Color[i_index][j_index]].src;
   }
-  // if (MoveCount<10)
-  //   window.document.OptionsForm.Moves.value=" "+eval(MoveCount)+" ";
-  // else
-  //   window.document.OptionsForm.Moves.value=MoveCount;
-}
-
-function ShowHelp() {
-  alert(
-    'Hex is a board game for two players. It was' +
-      '\nindependently invented by Piet Hein in 1942' +
-      '\nand John Nash in 1948 and became popular' +
-      '\nafter 1950 under the name Hex.' +
-      '\nHex is most commonly played on a board with' +
-      '\n11x11 cells, but it can also be played on a' +
-      '\nboard of another size. The red player trys' +
-      '\nto connect the two red borders with a chain' +
-      '\nof red cells by coloring empty cells red,' +
-      '\nwhile the blue player trys the same with the' +
-      '\nblue borders.' +
-      '\nThe game can never end with a draw:' +
-      '\nWhen all cells have been colored, there must' +
-      '\nexists either a red chain or a blue chain.' +
-      '\nThe player who moves first has a big advantage.' +
-      '\nIn order to compense this, there is often used' +
-      "\nthe so-called 'swap rule': After the first move," +
-      '\nthe second player is allowed to swap the sides.' +
-      '\nIn order to apply the swap rule click again on' +
-      '\nthe cell which was selected in the first move.' +
-      '\nGood luck!'
-  );
 }
 
 function Resize() {
   return false;
-  if (navigator.appName == 'Netscape') history.go(0);
+  if (navigator.appName == 'Netscape') GameHistory.go(0);
 }
